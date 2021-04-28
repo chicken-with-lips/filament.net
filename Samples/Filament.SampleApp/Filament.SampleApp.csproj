@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GLFWDotNet" Version="20.9.0" />
+      <PackageReference Include="StbImageSharp" Version="2.22.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Filament\Filament.csproj" />
+      <ProjectReference Include="..\Filament.SampleData\Filament.SampleData.csproj" />
+    </ItemGroup>
+
+</Project>

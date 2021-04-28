@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Filament\Filament.csproj" />
+      <ProjectReference Include="..\Filament.SampleApp\Filament.SampleApp.csproj" />
+      <ProjectReference Include="..\Filament.SampleData\Filament.SampleData.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\generated\resources\resources.bin">
+            <Link>generated\resources\resources.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\generated\resources\resources.bin">
+            <Link>generated\resources\resources.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>

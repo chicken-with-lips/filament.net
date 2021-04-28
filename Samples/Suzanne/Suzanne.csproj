@@ -1,0 +1,91 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>bin/Debug</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="StbImageSharp" Version="2.22.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Samples\Filament.SampleApp\Filament.SampleApp.csproj" />
+      <ProjectReference Include="..\..\Filament\Filament.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\generated\resources\resources.bin">
+            <Link>generated\resources\resources.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\generated\resources\resources.bin">
+            <Link>generated\resources\resources.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\generated\resources\monkey.bin">
+            <Link>generated\resources\monkey.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\generated\resources\monkey.bin">
+            <Link>generated\resources\monkey.bin</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\default_env\default_env_ibl.ktx">
+            <Link>default_env\default_env_ibl.ktx</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\default_env\default_env_ibl.ktx">
+            <Link>default_env\default_env_ibl.ktx</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\default_env\default_env_skybox.ktx">
+            <Link>default_env\default_env_skybox.ktx</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\default_env\default_env_skybox.ktx">
+            <Link>default_env\default_env_skybox.ktx</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+        <Content Include="..\..\Dependencies\Filament\Debug\default_env\sh.txt">
+            <Link>default_env\sh.txt</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+        <Content Include="..\..\Dependencies\Filament\Release\default_env\sh.txt">
+            <Link>default_env\sh.txt</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
+</Project>
