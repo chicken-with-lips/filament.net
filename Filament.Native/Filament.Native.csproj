@@ -4,18 +4,32 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' AND '$(OS)' == 'Unix'">
         <Content Include="..\Dependencies\Filament\Debug\libfilament-dotnet.so">
             <Link>libfilament-dotnet.so</Link>
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup Condition="'$(Configuration)' == 'Debug' AND '$(OS)' == 'Windows_NT'">
+        <Content Include="..\Dependencies\Filament\Debug\libfilament-dotnet.dll">
+            <Link>libfilament-dotnet.dll</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release' AND '$(OS)' == 'Unix'">
         <Content Include="..\Dependencies\Filament\Release\libfilament-dotnet.so">
             <Link>libfilament-dotnet.so</Link>
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-    
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release' AND '$(OS)' == 'Windows_NT'">
+        <Content Include="..\Dependencies\Filament\Release\libfilament-dotnet.dll">
+            <Link>libfilament-dotnet.dll</Link>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>
