@@ -12,6 +12,15 @@ namespace Filament
         UInt = ElementType.UInt
     };
 
+    /// <summary>
+    /// A buffer containing vertex indices into a VertexBuffer.
+    /// </summary>
+    /// <remarks>
+    /// <para>Indices can be 16 or 32 bit.</para>
+    /// <para>The buffer itself is a GPU resource, therefore mutating the data can be relatively slow. Typically these
+    /// buffers are constant.</para>
+    ///<para>It is possible, and even encouraged, to use a single index buffer for several Renderables.</para>
+    /// </remarks>
     public class IndexBuffer : FilamentBase<IndexBuffer>
     {
         #region Methods
@@ -42,6 +51,9 @@ namespace Filament
         #endregion
     }
 
+    /// <summary>
+    /// Builder for building <see cref="IndexBuffer"/>.
+    /// </summary>
     public class IndexBufferBuilder : FilamentBase<IndexBufferBuilder>
     {
         #region Methods
@@ -55,6 +67,10 @@ namespace Filament
             return GetOrCreateCache(ptr, newPtr => new IndexBufferBuilder(newPtr));
         }
 
+        /// <summary>
+        /// Creates a new builder.
+        /// </summary>
+        /// <returns>A new builder.</returns>
         public static IndexBufferBuilder Create()
         {
             return GetOrCreateCache(
@@ -62,6 +78,11 @@ namespace Filament
             );
         }
 
+        /// <summary>
+        /// Size of the index buffer in elements.
+        /// </summary>
+        /// <param name="indexCount">Number of indices the IndexBuffer can hold.</param>
+        /// <returns>Reference to this builder for chaining calls.</returns>
         public IndexBufferBuilder WithIndexCount(int indexCount)
         {
             ThrowExceptionIfDisposed();
@@ -71,6 +92,11 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Type of the index buffer, 16-bit or 32-bit.
+        /// </summary>
+        /// <param name="indexType">Type of indices stored in the IndexBuffer.</param>
+        /// <returns>Reference to this builder for chaining calls.</returns>
         public IndexBufferBuilder WithBufferType(IndexType indexType)
         {
             ThrowExceptionIfDisposed();
@@ -80,6 +106,12 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Creates the IndexBuffer object and returns a <see cref="IndexBuffer"> to it. After creation, the index
+        /// buffer is uninitialized. Use IndexBuffer::setBuffer() to initialized the IndexBuffer.
+        /// </summary>
+        /// <param name="engine">Reference to the <see cref="Engine"/> to associate this IndexBuffer with.</param>
+        /// <returns>The newly created object or null if exceptions are disabled and an error occurred.</returns>
         public IndexBuffer Build(Engine engine)
         {
             ThrowExceptionIfDisposed();

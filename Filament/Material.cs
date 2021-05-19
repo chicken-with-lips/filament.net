@@ -6,6 +6,9 @@ namespace Filament
     {
         #region Properties
 
+        /// <summary>
+        /// Returns the name of this material.
+        /// </summary>
         public string Name {
             get {
                 ThrowExceptionIfDisposed();
@@ -24,6 +27,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the shading model of this material.
+        /// </summary>
         public MaterialShading ShadingModel {
             get {
                 ThrowExceptionIfDisposed();
@@ -32,6 +38,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the interpolation mode of this material. This affects how variables are interpolated.
+        /// </summary>
         public MaterialInterpolation InterpolationMode {
             get {
                 ThrowExceptionIfDisposed();
@@ -40,6 +49,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the blending mode of this material.
+        /// </summary>
         public MaterialBlendingMode BlendingMode {
             get {
                 ThrowExceptionIfDisposed();
@@ -48,6 +60,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the refraction mode used by this material.
+        /// </summary>
         public MaterialRefractionMode RefractionMode {
             get {
                 ThrowExceptionIfDisposed();
@@ -56,6 +71,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Return the refraction type used by this material.
+        /// </summary>
         public MaterialRefractionType RefractionType {
             get {
                 ThrowExceptionIfDisposed();
@@ -64,6 +82,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the vertex domain of this material.
+        /// </summary>
         public MaterialVertexDomain VertexDomain {
             get {
                 ThrowExceptionIfDisposed();
@@ -72,6 +93,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the default culling mode of this material.
+        /// </summary>
         public MaterialCullingMode CullingMode {
             get {
                 ThrowExceptionIfDisposed();
@@ -80,6 +104,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Indicates whether instances of this material will, by default, write to the color buffer.
+        /// </summary>
         public bool IsColorWriteEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -88,6 +115,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Indicates whether instances of this material will, by default, write to the depth buffer.
+        /// </summary>
         public bool IsDepthWriteEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -96,6 +126,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Indicates whether instances of this material will, by default, use depth testing.
+        /// </summary>
         public bool IsDepthCullingEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -104,6 +137,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Indicates whether this material is double-sided.
+        /// </summary>
         public bool IsDoubleSided {
             get {
                 ThrowExceptionIfDisposed();
@@ -112,6 +148,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the alpha mask threshold used when the blending mode is set to masked.
+        /// </summary>
         public float MaskThreshold {
             get {
                 ThrowExceptionIfDisposed();
@@ -120,6 +159,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the screen-space variance for specular-antialiasing, this value is between 0 and 1.
+        /// </summary>
         public float SpecularAntiAliasingVariance {
             get {
                 ThrowExceptionIfDisposed();
@@ -128,6 +170,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the clamping threshold for specular-antialiasing, this value is between 0 and 1.
+        /// </summary>
         public float SpecularAntiAliasingThreshold {
             get {
                 ThrowExceptionIfDisposed();
@@ -136,6 +181,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Returns the number of parameters declared by this material.
+        /// </summary>
         public int ParameterCount {
             get {
                 ThrowExceptionIfDisposed();
@@ -157,6 +205,11 @@ namespace Filament
             return GetOrCreateCache(ptr, newPtr => new Material(newPtr));
         }
 
+        /// <summary>
+        /// Creates a new instance of this material. Material instances should be freed using
+        /// <see cref="Engine.Destroy(MaterialInstance)"/>.
+        /// </summary>
+        /// <returns>The newly created instance.</returns>
         public MaterialInstance CreateInstance()
         {
             ThrowExceptionIfDisposed();
@@ -166,6 +219,11 @@ namespace Filament
             );
         }
 
+        /// <summary>
+        /// Indicates whether a parameter of the given name exists on this material.
+        /// </summary>
+        /// <param name="name">Name of the parameter.</param>
+        /// <returns>True if the material has a parameter with the given name, false if not.</returns>
         public bool HasParameter(string name)
         {
             ThrowExceptionIfDisposed();
@@ -176,6 +234,9 @@ namespace Filament
         #endregion
     }
 
+    /// <summary>
+    /// Used to setup and create a Material.
+    /// </summary>
     public class MaterialBuilder
     {
         #region Members
@@ -190,6 +251,13 @@ namespace Filament
         {
         }
 
+        /// <summary>
+        /// Specifies the material data. The material data is a binary blob produced by libfilamat or by matc.
+        /// </summary>
+        /// <param name="buffer">The material data.</param>
+        /// <param name="offset">Offset in to the material data to start reading.</param>
+        /// <param name="size">Size of the material data in bytes.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public MaterialBuilder WithPackage(byte[] buffer, int offset, int size)
         {
             _data = new byte[size];
@@ -198,6 +266,11 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Specifies the material data. The material data is a binary blob produced by libfilamat or by matc.
+        /// </summary>
+        /// <param name="data">The material data.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public MaterialBuilder WithPackage(byte[] data)
         {
             _data = data;
@@ -205,6 +278,12 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Creates the Material object.
+        /// </summary>
+        /// <param name="engine">Reference to the <see cref="Engine"/> to associate this Material with.</param>
+        /// <returns>The newly created object or null if exceptions are disabled and an error occurred.</returns>
+        /// <exception cref="Exception"></exception>
         public Material Build(Engine engine)
         {
             if (null == _data) {
@@ -216,6 +295,9 @@ namespace Filament
             );
         }
 
+        /// <summary>
+        /// Creates a new material builder.
+        /// </summary>
         public static MaterialBuilder Create()
         {
             return new();

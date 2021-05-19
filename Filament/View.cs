@@ -3,16 +3,49 @@ using OpenTK.Mathematics;
 
 namespace Filament
 {
+    /// <summary>
+    /// Viewport describes a view port in pixel coordinates.
+    /// </summary>
+    /// <remarks>A view port is represented by its left-bottom coordinate, width and height in pixels.</remarks>
     public readonly struct Viewport
     {
+        /// <summary>
+        /// Left coordinate in window space.
+        /// </summary>
         public int Left { get; }
+
+        /// <summary>
+        /// Bottom coordinate in window space.
+        /// </summary>
         public int Bottom { get; }
+
+        /// <summary>
+        /// Width in pixels.
+        /// </summary>
         public int Width { get; }
+
+        /// <summary>
+        /// Height in pixels.
+        /// </summary>
         public int Height { get; }
 
+        /// <summary>
+        /// The right coordinate in window space of the viewport.
+        /// </summary>
         public int Right => Left + Width;
+
+        /// <summary>
+        /// The top coordinate in window space of the viewport.
+        /// </summary>
         public int Top => Bottom + Height;
 
+        /// <summary>
+        /// Creates a Viewport from its left-bottom coordinates, width and height in pixels.
+        /// </summary>
+        /// <param name="left">Left coordinate in pixel.</param>
+        /// <param name="bottom">Bottom coordinate in pixel.</param>
+        /// <param name="width">Width in pixel.</param>
+        /// <param name="height">Height in pixel.</param>
         public Viewport(int left, int bottom, int width, int height)
         {
             Left = left;
@@ -22,10 +55,30 @@ namespace Filament
         }
     }
 
+    /// <summary>
+    /// A View encompasses all the state needed for rendering a Scene.
+    /// </summary>
+    /// <remarks>
+    /// <para>Renderer::render() operates on View objects. These View objects specify important parameters such as:</para>
+    /// <list>
+    /// <item>The Scene.</item>
+    /// <item>The Camera.</item>
+    /// <item>The Viewport.</item>
+    /// <item>Some rendering parameters.</item>
+    /// </list>
+    /// <para>Note: View instances are heavy objects that internally cache a lot of data needed for rendering. It is not
+    /// advised for an application to use many View objects.</para>
+    /// <para>For example, in a game, a View could be used for the main scene and another one for the game's user
+    /// interface. More View instances could be used for creating special effects (e.g. a View is akin to a rendering
+    /// pass).</para>
+    /// </remarks>
     public class View : FilamentBase<View>
     {
         #region Properties
 
+        /// <summary>
+        /// The View's name.
+        /// </summary>
         public string Name {
             set {
                 ThrowExceptionIfDisposed();
@@ -34,6 +87,11 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>The rectangular region to render to.</para>
+        /// <para>The viewport specifies where the content of the View (i.e. the Scene) is rendered in the render
+        /// target. The Render target is automatically clipped to the Viewport.</para>
+        /// </summary>
         public Viewport Viewport {
             get {
                 ThrowExceptionIfDisposed();
@@ -49,6 +107,10 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>This View's Camera.</para>
+        /// <para>Note: Make sure to dissociate a Camera from all Views before destroying it.</para>
+        /// </summary>
         public Camera Camera {
             get {
                 ThrowExceptionIfDisposed();
@@ -64,6 +126,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Debugging: The Camera used for rendering. It may be different from the culling camera.
+        /// </summary>
         public Camera DebugCamera {
             set {
                 ThrowExceptionIfDisposed();
@@ -72,6 +137,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Debugging: Returns a Camera from the point of view of the dominant directional light used for shadowing.
+        /// </summary>
         public Camera DirectionalLightCamera {
             get {
                 ThrowExceptionIfDisposed();
@@ -82,6 +150,10 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Set this View instance's Scene.</para>
+        /// <para>Note: Make sure to dissociate a Scene from all Views before destroying it.</para>
+        /// </summary>
         public Scene Scene {
             set {
                 ThrowExceptionIfDisposed();
@@ -90,6 +162,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables shadow mapping. Enabled by default.
+        /// </summary>
         public bool ShadowingEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -103,6 +178,20 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Enables or disables post processing. Enabled by default.</para>
+        /// <para>Post-processing includes:</para>
+        /// <list>
+        /// <item>Bloom</item>
+        /// <item>Tone-mapping & gamma encoding</item>
+        /// <item>Dithering</item>
+        /// <item>MSAA</item>
+        /// <item>FXAA</item>
+        /// <item>Dynamic scaling</item>
+        /// </list>
+        /// <para>Disabling post-processing forgoes color correctness as well as anti-aliasing and should only be used
+        /// experimentally (e.g. for UI overlays).</para>
+        /// </summary>
         public bool PostProcessingEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -116,6 +205,13 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Specifies an offscreen render target to render into.</para>
+        /// <para>By default, the view's associated render target is null, which corresponds to the SwapChain associated
+        /// with the engine.</para>
+        /// <para>A view with a custom render target cannot rely on <see cref="Renderer.SetClearOptions"/>, which only
+        /// apply to the SwapChain. Such view can use a Skybox instead.</para>
+        /// </summary>
         public RenderTarget RenderTarget {
             set {
                 ThrowExceptionIfDisposed();
@@ -124,6 +220,11 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Sets how many samples are to be used for MSAA in the post-process stage.  Default is 1 and disables
+        /// MSAA.</para>
+        /// <para>Note: Anti-aliasing can also be performed in the post-processing stage, generally at lower cost.</para>
+        /// </summary>
         public int SampleCount {
             set {
                 ThrowExceptionIfDisposed();
@@ -132,6 +233,10 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Enables or disables anti-aliasing in the post-processing stage. Enabled by default.</para>
+        /// <para>MSAA can be enabled in addition, see <see cref="SampleCount"/>.</para>
+        /// </summary>
         public ViewAntiAliasing AntiAliasing {
             get {
                 ThrowExceptionIfDisposed();
@@ -145,6 +250,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables dithering in the post-processing stage. Enabled by default.
+        /// </summary>
         public ViewDithering Dithering {
             get {
                 ThrowExceptionIfDisposed();
@@ -158,6 +266,15 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Set the shadow mapping technique this View uses.</para>
+        /// <para>The ShadowType affects all the shadows seen within the View.</para>
+        /// <para><see cref="ViewShadowType.Vsm"/> imposes a restriction on marking renderables as only shadow receivers
+        /// (but not casters). To ensure correct shadowing with VSM, all shadow participant renderables should be marked
+        /// as both receivers and casters. Objects that are guaranteed to not cast shadows on themselves or other
+        /// objects (such as flat ground planes) can be set to not cast shadows, which might improve shadow quality.</para>
+        /// <para>Warning: This API is still experimental and subject to change.</para>
+        /// </summary>
         public ViewShadowType ShadowType {
             set {
                 ThrowExceptionIfDisposed();
@@ -166,6 +283,10 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// The dynamic resolution options for this view. Dynamic resolution options controls whether dynamic resolution
+        /// is enabled, and if it is, how it behaves.
+        /// </summary>
         public bool IsDynamicResolutionEnabled {
             set {
                 ThrowExceptionIfDisposed();
@@ -174,6 +295,13 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Inverts the winding order of front faces. By default front faces use a counter-clockwise winding
+        /// order. When the winding order is inverted, front faces are faces with a clockwise winding order.</para>
+        /// <para>Changing the winding order will directly affect the culling mode in materials. Inverting the winding
+        /// order of front faces is useful when rendering mirrored reflections (water, mirror surfaces, front camera in
+        /// AR, etc.).</para>
+        /// </summary>
         public bool IsFrontFaceWindingInverted {
             get {
                 ThrowExceptionIfDisposed();
@@ -187,6 +315,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Activates or deactivates ambient occlusion.
+        /// </summary>
         public ViewAmbientOcclusion AmbientOcclusion {
             get {
                 ThrowExceptionIfDisposed();
@@ -200,6 +331,10 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// The rendering quality for this view. Refer to RenderQuality for more information about the different
+        /// settings available.
+        /// </summary>
         public ViewRenderQuality RenderQuality {
             set {
                 ThrowExceptionIfDisposed();
@@ -208,6 +343,12 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Sets VSM shadowing options that apply across the entire View.</para>
+        /// <para>Additional light-specific VSM options can be set with <see cref="LightManager.ShadowOptions"/>.</para>
+        /// <para>Note: Only applicable when shadow type is set to <see cref="ViewShadowType.Vsm"/>.</para>
+        /// <para>Warning: This API is still experimental and subject to change.</para>
+        /// </summary>
         public VsmShadowOptions VsmShadowOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -216,6 +357,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Ambient occlusion options.
+        /// </summary>
         public ViewAmbientOcclusionOptions AmbientOcclusionOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -231,6 +375,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables bloom in the post-processing stage. Disabled by default.
+        /// </summary>
         public ViewBloomOptions BloomOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -242,6 +389,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables fog. Disabled by default.
+        /// </summary>
         public ViewFogOptions FogOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -252,6 +402,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// The blending mode used to draw the view into the SwapChain.
+        /// </summary>
         public ViewBlendMode BlendMode {
             set {
                 ThrowExceptionIfDisposed();
@@ -260,6 +413,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables Depth of Field. Disabled by default.
+        /// </summary>
         public ViewDepthOfFieldOptions DepthOfFieldOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -268,6 +424,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables the vignetted effect in the post-processing stage. Disabled by default.
+        /// </summary>
         public ViewVignetteOptions VignetteOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -279,6 +438,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disable temporal anti-aliasing (TAA). Disabled by default.
+        /// </summary>
         public ViewTemporalAntiAliasingOptions TemporalAntiAliasingOptions {
             set {
                 ThrowExceptionIfDisposed();
@@ -288,6 +450,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Enables or disables screen space refraction. Enabled by default.
+        /// </summary>
         public bool IsScreenSpaceRefractionEnabled {
             get {
                 ThrowExceptionIfDisposed();
@@ -314,6 +479,16 @@ namespace Filament
             return GetOrCreateCache(ptr, newPtr => new View(newPtr));
         }
 
+        /// <summary>
+        /// <para>Sets which layers are visible.</para>
+        /// <para>Renderable objects can have one or several layers associated to them. Layers are represented with an
+        /// 8-bits bitmask, where each bit corresponds to a layer.</para>
+        /// <para>This call sets which of those layers are visible. Renderables in invisible layers won't be rendered.</para>
+        /// <para>Note: By default all layers are visible.</para>
+        /// </summary>
+        /// <param name="select">A bitmask specifying which layer to set or clear using <param name="value"/>.</param>
+        /// <param name="value">A bitmask where each bit sets the visibility of the corresponding layer (1: visible,
+        /// 0: invisible), only layers in <param name="select"/> are affected.</param>
         public void SetVisibleLayers(int select, int value)
         {
             ThrowExceptionIfDisposed();
@@ -321,6 +496,18 @@ namespace Filament
             Native.View.SetVisibleLayers(NativePtr, select, value);
         }
 
+        /// <summary>
+        /// <para>Sets options relative to dynamic lighting for this view.</para>
+        /// <para>Together zLightNear and zLightFar must be chosen so that the visible influence of lights is spread
+        /// between these two values.</para>
+        /// </summary>
+        /// <param name="zLightNear">Distance from the camera where the lights are expected to shine. This parameter can
+        /// affect performance and is useful because depending on the scene, lights that shine close to the camera may
+        /// not be visible -- in this case, using a larger value can improve performance. e.g. when standing and looking
+        /// straight, several meters of the ground isn't visible and if lights are expected to shine there, there is no
+        /// point using a short zLightNear. (DefaultL 5m).</param>
+        /// <param name="zLightFar">Distance from the camera after which lights are not expected to be visible.
+        /// Similarly to zLightNear, setting this value properly can improve performance. (Default: 100m).</param>
         public void SetDynamicLightingOptions(float zLightNear, float zLightFar)
         {
             ThrowExceptionIfDisposed();
@@ -332,6 +519,9 @@ namespace Filament
     }
 
 
+    /// <summary>
+    /// List of available post-processing anti-aliasing techniques.
+    /// </summary>
     public enum ViewAntiAliasing : byte
     {
         /// <summary>No anti aliasing performed as part of post-processing</summary>
@@ -341,6 +531,9 @@ namespace Filament
         Fxaa = 1,
     }
 
+    /// <summary>
+    /// List of available post-processing dithering techniques.
+    /// </summary>
     public enum ViewDithering : byte
     {
         /// <summary>No dithering</summary>
@@ -358,6 +551,9 @@ namespace Filament
         Ultra,
     }
 
+    /// <summary>
+    /// List of available shadow mapping techniques.
+    /// </summary>
     public enum ViewShadowType : byte
     {
         /// <summary>Percentage-closer filtered shadows (default)</summary>
@@ -367,6 +563,9 @@ namespace Filament
         Vsm,
     }
 
+    /// <summary>
+    /// List of available ambient occlusion techniques.
+    /// </summary>
     public enum ViewAmbientOcclusion : byte
     {
         /// <summary>No Ambient Occlusion</summary>
@@ -521,6 +720,9 @@ namespace Filament
         };
     }
 
+    /// <summary>
+    /// Options to control the bloom effect.
+    /// </summary>
     public struct ViewBloomOptions
     {
         /// <summary>
@@ -608,6 +810,9 @@ namespace Filament
         Interpolate,
     }
 
+    /// <summary>
+    /// Options to control fog in the scene.
+    /// </summary>
     public struct ViewFogOptions
     {
         /// <summary>Distance in world units from the camera where the fog starts ( >= 0.0 )</summary>
@@ -683,6 +888,9 @@ namespace Filament
         };
     }
 
+    /// <summary>
+    /// Options to control the vignetting effect.
+    /// </summary>
     public struct ViewVignetteOptions
     {
         /// <summary>High values restrict the vignette closer to the corners, between 0 and 1</summary>
@@ -709,6 +917,9 @@ namespace Filament
         };
     }
 
+    /// <summary>
+    /// Options for Temporal Anti-aliasing (TAA).
+    /// </summary>
     public struct ViewTemporalAntiAliasingOptions
     {
         /// <summary>Reconstruction filter width typically between 0 (sharper, aliased) and 1 (smoother)</summary>

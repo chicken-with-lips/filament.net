@@ -45,7 +45,7 @@ namespace Filament
 
         #endregion
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

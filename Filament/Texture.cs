@@ -2,10 +2,20 @@ using System;
 
 namespace Filament
 {
+    /// <summary>
+    /// Texture class supporting 2D and 3D textures, cube maps an mip-mapping.
+    /// </summary>
+    /// <remarks>A Texture is created by using <see cref="TextureBuilder"/>.
     public class Texture : FilamentBase<Texture>
     {
         #region Properties
 
+        /// <summary>
+        /// <para>Returns the maximum number of levels this texture can have.</para>
+        /// <para>Attention: If this texture is using <see cref="TextureSamplerType.External"/>, the dimension of the
+        /// texture are unknown and this method always returns whatever was set on the Builder.</para>
+        /// </summary>
+        /// <value>Maximum number of levels this texture can have.</value>
         public int Levels {
             get {
                 ThrowExceptionIfDisposed();
@@ -14,6 +24,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// This texture Sampler as set by <see cref="TextureBuilder.WithSampler"/>.
+        /// </summary>
         public TextureSamplerType Target {
             get {
                 ThrowExceptionIfDisposed();
@@ -22,6 +35,9 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// Return this texture InternalFormat as set by <see cref="TextureBuilder.WithFormat"/>.
+        /// </summary>
         public TextureFormat InternalFormat {
             get {
                 ThrowExceptionIfDisposed();
@@ -43,6 +59,13 @@ namespace Filament
             return GetOrCreateCache(ptr, newPtr => new Texture(newPtr));
         }
 
+        /// <summary>
+        /// <para>Returns the width of a 2D or 3D texture level.</para>
+        /// <para>Attention: If this texture is using <see cref="TextureSamplerType.External"/>, the dimension of the
+        /// texture are unknown and this method always returns whatever was set on the Builder.</para>
+        /// </summary>
+        /// <param name="level">Texture level.</param>
+        /// <returns>Width in texel of the specified level, clamped to 1.</returns>
         public int GetWidth(int level)
         {
             ThrowExceptionIfDisposed();
@@ -50,6 +73,13 @@ namespace Filament
             return Native.Texture.GetWidth(NativePtr, level);
         }
 
+        /// <summary>
+        /// <para>Returns the height of a 2D or 3D texture level.</para>
+        /// <para>Attention: If this texture is using <see cref="TextureSamplerType.External"/>, the dimension of the
+        /// texture are unknown and this method always returns whatever was set on the Builder.</para>
+        /// </summary>
+        /// <param name="level">Texture level.</param>
+        /// <returns>Height in texel of the specified level, clamped to 1.</returns>
         public int GetHeight(int level)
         {
             ThrowExceptionIfDisposed();
@@ -57,6 +87,13 @@ namespace Filament
             return Native.Texture.GetHeight(NativePtr, level);
         }
 
+        /// <summary>
+        /// <para>Returns the depth of a 3D texture level.</para>
+        /// <para>Attention: If this texture is using <see cref="TextureSamplerType.External"/>, the dimension of the
+        /// texture are unknown and this method always returns whatever was set on the Builder.</para>
+        /// </summary>
+        /// <param name="level">Texture level.</param>
+        /// <returns>Depth in texel of the specified level, clamped to 1.</returns>
         public int GetDepth(int level)
         {
             ThrowExceptionIfDisposed();
@@ -71,7 +108,22 @@ namespace Filament
             SetImage(engine, level, 0, 0, GetWidth(level), GetHeight(level), buffer);
         }
 
-        public void SetImage(Engine engine, int level, int xoffset, int yoffset, int width, int height, PixelBufferDescriptor descriptor)
+        /// <summary>
+        /// <para>Updates a sub-image of a 2D texture for a level.</para>
+        /// <para>Attention: Buffer's <see cref="TextureFormat"/> must match that of <see cref="InternalFormat"/>.</para>
+        /// <para>This Texture instance must use <see cref="TextureSamplerType.Texture2d"/> or
+        /// <see cref="TextureSamplerType.External"/>. IF the later is specified and external textures are supported by
+        /// the driver implementation, this method will have no effect, otherwise it will behave as if the texture was
+        /// specified with <see cref="TextureSamplerType.Texture2d"/>.</para>
+        /// </summary>
+        /// <param name="engine">Engine this texture is associated to.</param>
+        /// <param name="level">Level to set the image for.</param>
+        /// <param name="xOffset">Left offset of the sub-region to update.</param>
+        /// <param name="yOffset">Bottom offset of the sub-region to update.</param>
+        /// <param name="width">Width of the sub-region to update.</param>
+        /// <param name="height">Height of the sub-region to update.</param>
+        /// <param name="descriptor">Client-side buffer containing the image to set.</param>
+        public void SetImage(Engine engine, int level, int xOffset, int yOffset, int width, int height, PixelBufferDescriptor descriptor)
         {
             ThrowExceptionIfDisposed();
 
@@ -81,20 +133,34 @@ namespace Filament
 
             if (null != descriptor.LinearImage) {
                 Native.Texture.SetImageLinear(NativePtr, engine.NativePtr, level,
-                    xoffset, yoffset, width, height,
+                    xOffset, yOffset, width, height,
                     descriptor.LinearImage.NativePtr,
                     descriptor.Left, descriptor.Top, (byte) descriptor.Type, descriptor.Alignment,
                     descriptor.Stride, (byte) descriptor.Format);
             } else {
                 Native.Texture.SetImage(NativePtr, engine.NativePtr, level,
-                    xoffset, yoffset, width, height,
+                    xOffset, yOffset, width, height,
                     descriptor.Buffer, descriptor.Buffer.Length,
                     descriptor.Left, descriptor.Top, (byte) descriptor.Type, descriptor.Alignment,
                     descriptor.Stride, (byte) descriptor.Format);
             }
         }
 
-        public void SetImage(Engine engine, int level, int xoffset, int yoffset, int zoffset, int width, int height, int depth, PixelBufferDescriptor descriptor)
+        /// <summary>
+        /// <para>Updates a sub-image of a 3D texture or 2D texture array for a level.</para>
+        /// <para>Attention: Buffer's <see cref="TextureFormat"/> must match that of <see cref="InternalFormat"/>.</para>
+        /// <para>This Texture instance must use <see cref="TextureSamplerType.Texture3d"/> or
+        /// <see cref="TextureSamplerType.External"/>.</para>
+        /// </summary>
+        /// <param name="engine">Engine this texture is associated to.</param>
+        /// <param name="level">Level to set the image for.</param>
+        /// <param name="xOffset">Left offset of the sub-region to update.</param>
+        /// <param name="yOffset">Bottom offset of the sub-region to update.</param>
+        /// <param name="zOffset">Depth offset of the sub-region to update.</param>
+        /// <param name="width">Width of the sub-region to update.</param>
+        /// <param name="height">Height of the sub-region to update.</param>
+        /// <param name="descriptor">Client-side buffer containing the image to set.</param>
+        public void SetImage(Engine engine, int level, int xOffset, int yOffset, int zOffset, int width, int height, int depth, PixelBufferDescriptor descriptor)
         {
             ThrowExceptionIfDisposed();
 
@@ -105,6 +171,17 @@ namespace Filament
             }
         }
 
+        /// <summary>
+        /// <para>Specify all six images of a cube map level.</para>
+        /// <para>This method follows exactly the OpenGL conventions.</para>
+        /// <para>Attention: Buffer's <see cref="TextureFormat"/> must match that of <see cref="InternalFormat"/>.</para>
+        /// <para>This Texture instance must use <see cref="TextureSamplerType.Cubemap"/> or it has no effect</para>
+        /// </summary>
+        /// <param name="engine">Engine this texture is associated to.</param>
+        /// <param name="level">Level to set the image for.</param>
+        /// <param name="descriptor">Client-side buffer containing the images to set.</param>
+        /// <param name="faceOffsets">Offsets in bytes into \p buffer for all six images. The offsets are specified in
+        /// the following order: +x, -x, +y, -y, +z, -z</param>
         public void SetImage(Engine engine, int level, PixelBufferDescriptor descriptor, FaceOffsets faceOffsets)
         {
             ThrowExceptionIfDisposed();
@@ -124,6 +201,13 @@ namespace Filament
                 faceOffsets.ToArray());
         }
 
+        /// <summary>
+        /// <para>Generates all the mipmap levels automatically. This requires the texture to have a color-renderable
+        /// format.</para>
+        /// <para>Attention:This Texture instance must NOT use <see cref="TextureSamplerType.Cubemap"/> or it has no
+        /// effect</para>
+        /// </summary>
+        /// <param name="engine">Engine this texture is associated to.</param>
         public void GenerateMipmaps(Engine engine)
         {
             ThrowExceptionIfDisposed();
@@ -134,6 +218,9 @@ namespace Filament
         #endregion
     }
 
+    /// <summary>
+    /// Use Builder to construct a Texture object instance.
+    /// </summary>
     public class TextureBuilder : FilamentBase<TextureBuilder>
     {
         #region Methods
@@ -147,6 +234,11 @@ namespace Filament
             return GetOrCreateCache(ptr, newPtr => new TextureBuilder(newPtr));
         }
 
+        /// <summary>
+        /// Specifies the width in texels of the texture. Doesn't need to be a power-of-two.
+        /// </summary>
+        /// <param name="width">Width of the texture in texels (default: 1).</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithWidth(int width)
         {
             ThrowExceptionIfDisposed();
@@ -156,6 +248,11 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        ///Specifies the height in texels of the texture. Doesn't need to be a power-of-two.
+        /// </summary>
+        /// <param name="height">Height of the texture in texels (default: 1).</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithHeight(int height)
         {
             ThrowExceptionIfDisposed();
@@ -165,6 +262,15 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// <para>Specifies the depth in texels of the texture. Doesn't need to be a power-of-two.</para>
+        /// <para>The depth controls the number of layers in a 2D array texture. Values greater than 1 effectively
+        /// create a 3D texture.</para>
+        /// <para>Attention: This Texture instance must use <see cref="TextureSamplerType.Texture3d"/> or
+        /// <see cref="TextureSamplerType.Texture2dArray"/> or it has no effect.</para>
+        /// </summary>
+        /// <param name="depth">Depth of the texture in texels (default: 1).</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithDepth(int depth)
         {
             ThrowExceptionIfDisposed();
@@ -174,6 +280,13 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// <para>Specifies the numbers of mip map levels.</para>
+        /// <para>This creates a mip-map pyramid. The maximum number of levels a texture can have is such that
+        /// max(width, height, level) / 2^MAX_LEVELS = 1.</para>
+        /// </summary>
+        /// <param name="levels">Number of mipmap levels for this texture.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithLevels(int levels)
         {
             ThrowExceptionIfDisposed();
@@ -183,6 +296,11 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Specifies the type of sampler to use.
+        /// </summary>
+        /// <param name="samplerType">Sampler type.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithSampler(TextureSamplerType samplerType)
         {
             ThrowExceptionIfDisposed();
@@ -192,6 +310,14 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// <para>Specifies the internal format of this texture.</para>
+        /// <para>The internal format specifies how texels are stored (which may be different from how they'r
+        /// e specified in SetImage). InternalFormat specifies both the color components and the data type used.</para>
+        /// </summary>
+        /// </summary>
+        /// <param name="format">Format of the texture's texel.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithFormat(TextureFormat format)
         {
             ThrowExceptionIfDisposed();
@@ -201,6 +327,14 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// <para>Specifies if the texture will be used as a render target attachment.</para>
+        /// <para>If the texture is potentially rendered into, it may require a different memory layout, which needs to
+        /// be known during construction.</para>
+        /// </summary>
+        /// <param name="usage">Defaults to <see cref="TextureUsage.Default"/>; c.f.
+        /// <see cref="TextureUsage.ColorAttachment"/>.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithUsage(TextureUsage usage)
         {
             ThrowExceptionIfDisposed();
@@ -210,6 +344,14 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Specifies how a texture's channels map to color components.
+        /// </summary>
+        /// <param name="r">Channel for red component.</param>
+        /// <param name="g">Channel for green component.</param>
+        /// <param name="b">Channel for blue component.</param>
+        /// <param name="a">Channel for alpha component.</param>
+        /// <returns>This Builder, for chaining calls.</returns>
         public TextureBuilder WithSwizzle(TextureSwizzle r, TextureSwizzle g, TextureSwizzle b, TextureSwizzle a)
         {
             ThrowExceptionIfDisposed();
@@ -219,6 +361,11 @@ namespace Filament
             return this;
         }
 
+        /// <summary>
+        /// Creates the Texture object and returns a pointer to it.
+        /// </summary>
+        /// <param name="engine">Reference to the <see cref="Engine"/> to associate this Texture with.</param>
+        /// <returns>The newly created object or nullptr if exceptions are disabled and an error occurred.</returns>
         public Texture Build(Engine engine)
         {
             ThrowExceptionIfDisposed();
@@ -228,6 +375,9 @@ namespace Filament
             );
         }
 
+        /// <summary>
+        /// Creates a new builder.
+        /// </summary>
         public static TextureBuilder Create()
         {
             return GetOrCreateCache(

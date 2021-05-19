@@ -2,6 +2,9 @@ using System;
 
 namespace Filament
 {
+    /// <summary>
+    /// TextureSampler defines how a texture is accessed.
+    /// </summary>
     public class TextureSampler : FilamentBase<TextureSampler>
     {
         #region Methods
