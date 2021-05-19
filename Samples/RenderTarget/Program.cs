@@ -93,7 +93,7 @@ namespace RenderTarget
                 offscreenView.RenderTarget = offscreenRenderTarget;
                 offscreenView.Viewport = new Viewport(0, 0, vp.Width, vp.Height);
 
-                offscreenCamera = engine.CreateCameraWithEntity(EntityManager.Create());
+                offscreenCamera = engine.CreateCamera(EntityManager.Create());
                 offscreenView.Camera = offscreenCamera;
 
                 app.AddOffscreenView(offscreenView);

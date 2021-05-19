@@ -82,7 +82,7 @@ namespace HelloTriangle
                 scene.AddEntity(renderable);
 
                 cameraEntity = EntityManager.Create();
-                camera = engine.CreateCameraWithEntity(cameraEntity);
+                camera = engine.CreateCamera(cameraEntity);
                 view.Camera = camera;
             };
 

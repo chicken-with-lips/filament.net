@@ -84,7 +84,7 @@ namespace VboTest
 
                 // Replace the FilamentApp camera with identity.
                 cameraEntity = EntityManager.Create();
-                camera = engine.CreateCameraWithEntity(cameraEntity);
+                camera = engine.CreateCamera(cameraEntity);
                 view.Camera = camera;
             };
 

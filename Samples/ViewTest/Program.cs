@@ -31,7 +31,7 @@ namespace ViewTest
             );
 
             app.Setup = (engine, view, scene) => {
-                camera = engine.CreateCameraWithEntity(EntityManager.Create());
+                camera = engine.CreateCamera(EntityManager.Create());
 
                 skybox = SkyboxBuilder.Create()
                     .WithColor(new Color(0, 0, 1, 1))

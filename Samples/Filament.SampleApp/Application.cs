@@ -419,10 +419,10 @@ namespace Filament.DemoApp
         private void InitCameraAndViews()
         {
             // create cameras
-            _cameras[0] = _mainCamera = _engine.CreateCameraWithEntity(EntityManager.Create());
-            _cameras[1] = _debugCamera = _engine.CreateCameraWithEntity(EntityManager.Create());
-            _cameras[2] = _orthoCamera = _engine.CreateCameraWithEntity(EntityManager.Create());
-            _cameras[3] = _uiCamera = _engine.CreateCameraWithEntity(EntityManager.Create());
+            _cameras[0] = _mainCamera = _engine.CreateCamera(EntityManager.Create());
+            _cameras[1] = _debugCamera = _engine.CreateCamera(EntityManager.Create());
+            _cameras[2] = _orthoCamera = _engine.CreateCamera(EntityManager.Create());
+            _cameras[3] = _uiCamera = _engine.CreateCamera(EntityManager.Create());
 
             // set exposure
             foreach (var camera in _cameras) {

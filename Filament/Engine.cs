@@ -169,7 +169,12 @@ namespace Filament
             );
         }
 
-        public Camera CreateCameraWithEntity(int entity)
+        /// <summary>
+        /// Creates a Camera component.
+        /// </summary>
+        /// <param name="entity">Entity to add the camera component to.</param>
+        /// <returns>The newly created Camera or null if it couldn't be created.</returns>
+        public Camera CreateCamera(int entity)
         {
             ThrowExceptionIfDisposed();
 

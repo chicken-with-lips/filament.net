@@ -71,7 +71,7 @@ namespace ViewTest
 
                 scene.Skybox = skybox;
                 cameraEntity = EntityManager.Create();
-                camera = engine.CreateCameraWithEntity(cameraEntity);
+                camera = engine.CreateCamera(cameraEntity);
 
                 view.PostProcessingEnabled = false;
                 view.Camera = camera;
