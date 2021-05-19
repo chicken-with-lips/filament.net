@@ -74,6 +74,16 @@ namespace Filament
             }
         }
 
+        public Material DefaultMaterial {
+            get {
+                ThrowExceptionIfDisposed();
+
+                return Material.GetOrCreateCache(
+                    Native.Engine.GetDefaultMaterial(NativePtr)
+                );
+            }
+        }
+
         #endregion
 
         #region Methods

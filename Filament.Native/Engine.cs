@@ -82,5 +82,8 @@ namespace Filament.Native
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nGetRenderableManager")]
         public static extern IntPtr GetRenderableManager(IntPtr nativeEngine);
+
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nGetDefaultMaterial")]
+        public static extern IntPtr GetDefaultMaterial(IntPtr nativeEngine);
     }
 }
