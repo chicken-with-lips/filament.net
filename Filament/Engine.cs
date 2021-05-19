@@ -180,6 +180,20 @@ namespace Filament
         }
 
         /// <summary>
+        /// Returns the Camera component of the given entity.
+        /// </summary>
+        /// <param name="entity">An entity.</param>
+        /// <returns>The Camera component for this entity or null if the entity didn't have a Camera component.</returns>
+        public Camera GetCameraComponent(int entity)
+        {
+            ThrowExceptionIfDisposed();
+
+            return Camera.GetOrCreateCache(
+                Native.Engine.GetCameraComponent(NativePtr, entity)
+            );
+        }
+
+        /// <summary>
         /// Destroys all filament-known components from this entity.
         /// </summary>
         /// <param name="entity">An entity.</param>

@@ -29,6 +29,9 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nDestroyCameraComponent")]
         public static extern void DestroyCameraComponent(IntPtr nativeEngine, int entity);
 
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nGetCameraComponent")]
+        public static extern IntPtr GetCameraComponent(IntPtr nativeEngine, int entity);
+
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateScene")]
         public static extern IntPtr CreateScene(IntPtr nativeEngine);
 
