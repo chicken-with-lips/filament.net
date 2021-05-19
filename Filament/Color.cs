@@ -24,12 +24,36 @@ namespace Filament
             return NativeToLinearAccurate(color);
         }
 
+        /// <summary>
+        /// Converts a correlated color temperature to a linear RGB color in sRGB space the temperature must be
+        /// expressed in kelvin and must be in the range 1,000K to 15,000K.
+        /// </summary>
+        public static LinearColor FromCorrelatedColorTemperature(float k)
+        {
+            return NativeCorrelatedColorTemperature(k);
+        }
+
+        /// <summary>
+        /// Converts a CIE standard illuminant series D to a linear RGB color in sRGB space the temperature must be
+        /// expressed in kelvin and must be in the range 4,000K to 25,000K.
+        /// </summary>
+        public static LinearColor FromIlluminantD(float k)
+        {
+            return NativeIlluminantD(k);
+        }
+
         #endregion
 
         #region P/Invoke
 
-        [DllImport("libfilament-dotnet", EntryPoint = "filament_Color_ToLinearAccurate", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Color_ToLinearAccurate")]
         private static extern LinearColor NativeToLinearAccurate(sRGBColor color);
+
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Color_cct")]
+        private static extern LinearColor NativeCorrelatedColorTemperature(float k);
+
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Color_illuminantD")]
+        private static extern LinearColor NativeIlluminantD(float k);
 
         #endregion
     }
