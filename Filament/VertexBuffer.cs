@@ -1,7 +1,6 @@
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
-using OpenTK.Mathematics;
-using Half = OpenTK.Mathematics.Half;
 
 namespace Filament
 {
@@ -49,13 +48,6 @@ namespace Filament
             NativeSetBufferAtVector3(NativePtr, engine.NativePtr, bufferIndex, buffer, buffer.Length * 3 * Marshal.SizeOf<float>(), 0);
         }
 
-        public void SetBufferAt(Engine engine, int bufferIndex, Vector4h[] buffer)
-        {
-            ThrowExceptionIfDisposed();
-
-            NativeSetBufferAtVector4h(NativePtr, engine.NativePtr, bufferIndex, buffer, buffer.Length * 4 * Half.SizeInBytes, 0);
-        }
-
         public void SetBufferAt(Engine engine, int bufferIndex, byte[] buffer)
         {
             ThrowExceptionIfDisposed();
@@ -73,9 +65,6 @@ namespace Filament
         #endregion
 
         #region P/Invoke
-
-        [DllImport("libfilament-dotnet", EntryPoint = "filament_VertexBuffer_nSetBufferAt", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void NativeSetBufferAtVector4h(IntPtr nativeVertexBuffer, IntPtr nativeEngine, int bufferIndex, Vector4h[] buffer, int bufferSizeInBytes, int destOffsetInBytes);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_VertexBuffer_nSetBufferAt", CallingConvention = CallingConvention.Cdecl)]
         private static extern void NativeSetBufferAtVector3(IntPtr nativeVertexBuffer, IntPtr nativeEngine, int bufferIndex, Vector3[] buffer, int bufferSizeInBytes, int destOffsetInBytes);

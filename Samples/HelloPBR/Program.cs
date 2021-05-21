@@ -1,10 +1,8 @@
-﻿using System;
+﻿using System.Numerics;
 using Filament;
-using Filament.CameraUtilities;
 using Filament.DemoApp;
 using Filament.MeshIO;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 
 namespace HelloPBR
 {
@@ -18,7 +16,7 @@ namespace HelloPBR
             Material material = null;
             MaterialInstance materialInstance = null;
             Mesh mesh = null;
-            Matrix4 transform = Matrix4.Identity;
+            Matrix4x4 transform = Matrix4x4.Identity;
 
             var app = new Application(
                 new WindowConfig() {
@@ -52,7 +50,7 @@ namespace HelloPBR
 
                 var ti = tcm.GetInstance(mesh.Renderable);
 
-                transform = Matrix4.CreateTranslation(0, 0, -4) * tcm.GetWorldTransform(ti);
+                transform = Matrix4x4.CreateTranslation(0, 0, -4) * tcm.GetWorldTransform(ti);
                 rcm.SetCastShadows(rcm.GetInstance(mesh.Renderable), false);
                 scene.AddEntity(mesh.Renderable);
 
@@ -81,7 +79,7 @@ namespace HelloPBR
                 var tcm = engine.TransformManager;
                 var ti = tcm.GetInstance(mesh.Renderable);
 
-                tcm.SetTransform(ti, Matrix4.CreateFromAxisAngle(Vector3.UnitY, now) * transform);
+                tcm.SetTransform(ti, Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, now) * transform);
             };
 
             app.Run();

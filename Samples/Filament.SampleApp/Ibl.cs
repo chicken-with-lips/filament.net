@@ -1,9 +1,9 @@
 using System;
 using System.IO;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Filament.Image;
-using OpenTK.Mathematics;
 using StbImageSharp;
 
 namespace Filament.DemoApp
@@ -195,7 +195,7 @@ namespace Filament.DemoApp
                 numLevels = 1;
 
                 if (string.IsNullOrEmpty(levelPrefix)) {
-                    numLevels = (int) MathHelper.Log2(size) + 1;
+                    numLevels = (int) MathF.Log2(size) + 1;
                 }
 
                 if (level == 0) {

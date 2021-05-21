@@ -1,6 +1,6 @@
 using System;
+using System.Numerics;
 using Filament.CameraUtilities;
-using OpenTK.Mathematics;
 
 namespace Filament
 {
@@ -86,7 +86,7 @@ namespace Filament
         /// <summary>
         /// Returns or sets the camera's view matrix.
         /// </summary>
-        public Matrix4 ModelMatrix {
+        public Matrix4x4 ModelMatrix {
             get {
                 ThrowExceptionIfDisposed();
 
@@ -94,7 +94,7 @@ namespace Filament
 
                 Native.Camera.GetModelMatrix(NativePtr, m);
 
-                return new Matrix4(
+                return new Matrix4x4(
                     m[0], m[1], m[2], m[3],
                     m[4], m[5], m[6], m[7],
                     m[8], m[9], m[10], m[11],
@@ -118,8 +118,7 @@ namespace Filament
         /// <para>The projection matrix used for rendering always has its far plane set to infinity. This is why it may differ
         /// from the matrix set through setProjection() or setLensProjection().</para>
         /// </summary>
-        /// <param name="matrix">The projection matrix used for rendering.</param>
-        public Matrix4 ProjectionMatrix {
+        public Matrix4x4 ProjectionMatrix {
             get {
                 ThrowExceptionIfDisposed();
 
@@ -127,7 +126,27 @@ namespace Filament
 
                 Native.Camera.GetProjectionMatrix(NativePtr, m);
 
-                return new Matrix4(
+                return new Matrix4x4(
+                    m[0], m[1], m[2], m[3],
+                    m[4], m[5], m[6], m[7],
+                    m[8], m[9], m[10], m[11],
+                    m[12], m[13], m[14], m[15]
+                );
+            }
+        }
+
+        /// <summary>
+        /// Returns the projection matrix used for culling (far plane is finite).
+        /// </summary>
+        public Matrix4x4 CullingProjectionMatrix {
+            get {
+                ThrowExceptionIfDisposed();
+
+                var m = new float[16];
+
+                Native.Camera.GetCullingProjectionMatrix(NativePtr, m);
+
+                return new Matrix4x4(
                     m[0], m[1], m[2], m[3],
                     m[4], m[5], m[6], m[7],
                     m[8], m[9], m[10], m[11],
@@ -251,19 +270,39 @@ namespace Filament
         /// <summary>
         /// Sets the projection matrix.
         /// </summary>
-        /// <param name="projection">Custom projection matrix.</param>
+        /// <param name="projection">Custom projection matrix used for rendering and culling.</param>
         /// <param name="near">Distance in world units from the camera to the near plane. \p near > 0.</param>
         /// <param name="far">Distance in world units from the camera to the far plane. \p far > \p near.</param>
-        public void SetCustomProjection(Matrix4 projection, float near, float far)
+        public void SetCustomProjection(Matrix4x4 projection, float near, float far)
+        {
+            SetCustomProjection(projection, projection, near, far);
+        }
+
+        /// <summary>
+        /// Sets the projection matrix.
+        /// </summary>
+        /// <param name="projection">Custom projection matrix.</param>
+        /// <param name="projectionForCulling">Custom projection matrix used for culling.</param>
+        /// <param name="near">Distance in world units from the camera to the near plane. \p near > 0.</param>
+        /// <param name="far">Distance in world units from the camera to the far plane. \p far > \p near.</param>
+        public void SetCustomProjection(Matrix4x4 projection, Matrix4x4 projectionForCulling, float near, float far)
         {
             ThrowExceptionIfDisposed();
 
             Native.Camera.SetCustomProjection(NativePtr, new[] {
-                projection.M11, projection.M12, projection.M13, projection.M14,
-                projection.M21, projection.M22, projection.M23, projection.M24,
-                projection.M31, projection.M32, projection.M33, projection.M34,
-                projection.M41, projection.M42, projection.M43, projection.M44,
-            }, near, far);
+                    projection.M11, projection.M12, projection.M13, projection.M14,
+                    projection.M21, projection.M22, projection.M23, projection.M24,
+                    projection.M31, projection.M32, projection.M33, projection.M34,
+                    projection.M41, projection.M42, projection.M43, projection.M44,
+                },
+                new[] {
+                    projectionForCulling.M11, projectionForCulling.M12, projectionForCulling.M13, projectionForCulling.M14,
+                    projectionForCulling.M21, projectionForCulling.M22, projectionForCulling.M23, projectionForCulling.M24,
+                    projectionForCulling.M31, projectionForCulling.M32, projectionForCulling.M33, projectionForCulling.M34,
+                    projectionForCulling.M41, projectionForCulling.M42, projectionForCulling.M43, projectionForCulling.M44,
+                },
+                near, far
+            );
         }
 
         #endregion

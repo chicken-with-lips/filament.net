@@ -1,7 +1,8 @@
-﻿using Filament;
+﻿using System;
+using System.Numerics;
+using Filament;
 using Filament.DemoApp;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 
 namespace HelloTriangle
 {
@@ -22,9 +23,9 @@ namespace HelloTriangle
             var vbo = new VertexBufferObject();
             vbo.Write(new Vector2(1, 0));
             vbo.Write(0xffff0000u);
-            vbo.Write(new Vector2((float) MathHelper.Cos(MathHelper.Pi * 2 / 3), (float) MathHelper.Sin(MathHelper.Pi * 2 / 3)));
+            vbo.Write(new Vector2(MathF.Cos(MathF.PI * 2 / 3), MathF.Sin(MathF.PI * 2 / 3)));
             vbo.Write(0xff00ff00u);
-            vbo.Write(new Vector2((float) MathHelper.Cos(MathHelper.Pi * 4 / 3), (float) MathHelper.Sin(MathHelper.Pi * 4 / 3)));
+            vbo.Write(new Vector2(MathF.Cos(MathF.PI * 4 / 3), MathF.Sin(MathF.PI * 4 / 3)));
             vbo.Write(0xff0000ffu);
 
             var app = new Application(
@@ -107,7 +108,7 @@ namespace HelloTriangle
                 camera.SetProjection(Projection.Ortho, -aspect * ZOOM, aspect * ZOOM, -ZOOM, ZOOM, 0, 1);
 
                 var tcm = engine.TransformManager;
-                tcm.SetTransform(tcm.GetInstance(renderable), Matrix4.CreateFromAxisAngle(Vector3.UnitZ, now));
+                tcm.SetTransform(tcm.GetInstance(renderable), Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, now));
             };
 
             app.Run();

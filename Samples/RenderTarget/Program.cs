@@ -1,9 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Numerics;
 using Filament;
 using Filament.DemoApp;
 using Filament.MeshIO;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 
 namespace RenderTarget
 {
@@ -35,7 +36,7 @@ namespace RenderTarget
             MaterialInstance meshMatInstance = null;
             Mesh monkeyMesh = null;
             int reflectedMonkey = -1;
-            Matrix4 transform = Matrix4.Identity;
+            Matrix4x4 transform = Matrix4x4.Identity;
 
             int quadEntity = -1;
             Vector3 quadCenter = Vector3.Zero;
@@ -88,7 +89,6 @@ namespace RenderTarget
                     .WithTexture(AttachmentPoint.Color, offscreenColorTexture)
                     .WithTexture(AttachmentPoint.Depth, offscreenDepthTexture)
                     .Build(engine);
-                ;
 
                 offscreenView.RenderTarget = offscreenRenderTarget;
                 offscreenView.Viewport = new Viewport(0, 0, vp.Width, vp.Height);
@@ -100,8 +100,8 @@ namespace RenderTarget
 
                 // Position and orient the mirror in an interesting way.
                 var c = quadCenter = new Vector3(-2, 0, -5);
-                var n = quadNormal = new Vector3(1, 0, 2).Normalized();
-                var u = Vector3.Cross(quadNormal, new Vector3(0, 1, 0)).Normalized();
+                var n = quadNormal = Vector3.Normalize(new Vector3(1, 0, 2));
+                var u = Vector3.Normalize(Vector3.Cross(quadNormal, new Vector3(0, 1, 0)));
                 var v = Vector3.Cross(n, u);
                 u = 1.5f * u;
                 v = 1.5f * v;
@@ -199,7 +199,7 @@ namespace RenderTarget
 
                 var ti = tcm.GetInstance(monkeyMesh.Renderable);
 
-                transform = Matrix4.CreateTranslation(0, 0, -4) * tcm.GetWorldTransform(ti);
+                transform = Matrix4x4.CreateTranslation(0, 0, -4) * tcm.GetWorldTransform(ti);
                 rcm.SetCastShadows(rcm.GetInstance(monkeyMesh.Renderable), false);
                 scene.AddEntity(monkeyMesh.Renderable);
 
@@ -269,8 +269,8 @@ namespace RenderTarget
 
                 // Animate the monkey by spinning and sliding back and forth along Z.
                 var ti = tcm.GetInstance(monkeyMesh.Renderable);
-                var xlate = Matrix4.CreateTranslation(new Vector3(0, 0, 0.5f + (float) MathHelper.Sin(now)));
-                var xform = Matrix4.CreateRotationY(now) * xlate * transform;
+                var xlate = Matrix4x4.CreateTranslation(new Vector3(0, 0, 0.5f + MathF.Sin(now)));
+                var xform = Matrix4x4.CreateRotationY(now) * xlate * transform;
                 tcm.SetTransform(ti, xform);
 
                 // Generate a reflection matrix from the plane equation Ax + By + Cz + D = 0.
@@ -278,18 +278,20 @@ namespace RenderTarget
                 var planeEquation = new Vector4(planeNormal, -Vector3.Dot(planeNormal, quadCenter));
                 var reflection = BuildReflectionMatrix(planeEquation);
 
+                var camera = view.Camera;
+                var model = camera.ModelMatrix;
+
+                offscreenCamera.SetCustomProjection(camera.ProjectionMatrix, camera.CullingProjectionMatrix, camera.Near, camera.CullingFar);
+
                 // Apply the reflection matrix to either the renderable or the camera, depending on mode.
                 switch (mode) {
                     case ReflectionMode.Renderables:
-                        tcm.SetTransform(tcm.GetInstance(reflectedMonkey), xform * reflection);
-
-                        offscreenCamera.ModelMatrix = view.Camera.ModelMatrix;
-                        offscreenCamera.SetCustomProjection(view.Camera.ProjectionMatrix, 0.1f, 100.0f);
+                        tcm.SetTransform(tcm.GetInstance(reflectedMonkey), reflection * xform);
+                        offscreenCamera.ModelMatrix = model;
                         break;
 
                     case ReflectionMode.Camera:
-                        offscreenCamera.ModelMatrix = view.Camera.ModelMatrix * reflection;
-                        offscreenCamera.SetCustomProjection(view.Camera.ProjectionMatrix, 0.1f, 100.0f);
+                        offscreenCamera.ModelMatrix = model * reflection;
                         break;
                 }
             };
@@ -316,9 +318,9 @@ namespace RenderTarget
             return mode;
         }
 
-        private static Matrix4 BuildReflectionMatrix(Vector4 plane)
+        private static Matrix4x4 BuildReflectionMatrix(Vector4 plane)
         {
-            var m = new Matrix4(
+            var m = new Matrix4x4(
                 -2f * plane.X * plane.X + 1f,
                 -2f * plane.X * plane.Y,
                 -2f * plane.X * plane.Z,
@@ -334,9 +336,7 @@ namespace RenderTarget
                 0f, 0f, 0f, 1f
             );
 
-            m.Transpose();
-
-            return m;
+            return Matrix4x4.Transpose(m);
         }
     }
 }

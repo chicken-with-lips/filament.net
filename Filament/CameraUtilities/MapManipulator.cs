@@ -1,4 +1,5 @@
-using OpenTK.Mathematics;
+using System;
+using System.Numerics;
 
 namespace Filament.CameraUtilities
 {
@@ -6,7 +7,7 @@ namespace Filament.CameraUtilities
     {
         #region Members
 
-        private bool _grabbing = false;
+        private bool _grabbing;
         private Vector3 _grabScene;
         private Vector3 _grabFar;
         private Vector3 _grabEye;
@@ -21,10 +22,10 @@ namespace Filament.CameraUtilities
             var width = Props.MapExtent.X;
             var height = Props.MapExtent.Y;
             var horiz = Props.FovDirection == FieldOfView.Horizontal;
-            var targetToEye = Props.GroundPlane.Xyz;
+            var targetToEye = new Vector3(Props.GroundPlane.X, Props.GroundPlane.Y, Props.GroundPlane.Z);
             var halfExtent = (horiz ? width : height) / 2.0f;
-            var fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
-            var distance = (float) (halfExtent / MathHelper.Tan(fov / 2.0f));
+            var fov = Props.FovDegrees * MathF.PI / 180.0f;
+            var distance = (halfExtent / MathF.Tan(fov / 2.0f));
 
             Target = Props.TargetPosition;
             Eye = Target + distance * targetToEye;
@@ -49,12 +50,12 @@ namespace Filament.CameraUtilities
                 float distance;
                 RaycastPlane(Eye, direction, out distance, Props);
 
-                float fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
-                float halfExtent = (float) (distance * MathHelper.Tan(fov / 2.0f));
+                float fov = Props.FovDegrees * MathF.PI / 180.0f;
+                float halfExtent = (distance * MathF.Tan(fov / 2.0f));
 
                 var targetPosition = Eye + direction * distance;
 
-                var targetToEye = Props.GroundPlane.Xyz;
+                var targetToEye = new Vector3(Props.GroundPlane.X, Props.GroundPlane.Y, Props.GroundPlane.Z);
                 var uvec = Vector3.Cross(Props.UpVector, targetToEye);
                 var vvec = Vector3.Cross(targetToEye, uvec);
                 var centerToTarget = targetPosition - Props.TargetPosition;
@@ -70,7 +71,7 @@ namespace Filament.CameraUtilities
                 bookmark.Orbit.Pivot = Props.TargetPosition +
                                        uvec * bookmark.Map.Center.X +
                                        vvec * bookmark.Map.Center.Y;
-                bookmark.Orbit.Distance = (float) (halfExtent / MathHelper.Tan(fov / 2.0));
+                bookmark.Orbit.Distance = (halfExtent / MathF.Tan(fov / 2.0f));
 
                 return bookmark;
             }
@@ -78,7 +79,7 @@ namespace Filament.CameraUtilities
 
         public override Bookmark HomeBookmark {
             get {
-                var fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
+                var fov = Props.FovDegrees * MathF.PI / 180.0f;
                 var width = Props.MapExtent.X;
                 var height = Props.MapExtent.Y;
                 var horiz = Props.FovDirection == FieldOfView.Horizontal;
@@ -92,7 +93,7 @@ namespace Filament.CameraUtilities
                 bookmark.Orbit.Theta = 0;
                 bookmark.Orbit.Phi = 0;
                 bookmark.Orbit.Pivot = Target;
-                bookmark.Orbit.Distance = (float) (0.5 * bookmark.Map.Extent / MathHelper.Tan(fov / 2.0));
+                bookmark.Orbit.Distance = (float) (0.5 * bookmark.Map.Extent / MathF.Tan(fov / 2.0f));
 
                 return bookmark;
             }
@@ -145,7 +146,7 @@ namespace Filament.CameraUtilities
 
             // Prevent getting stuck when zooming in.
             if (scrollDelta < 0) {
-                var distanceToSurface = u.Length;
+                var distanceToSurface = u.Length();
                 if (distanceToSurface < Props.ZoomSpeed) {
                     return;
                 }
@@ -162,10 +163,10 @@ namespace Filament.CameraUtilities
 
         public override void JumpToBookmark(Bookmark bookmark)
         {
-            var targetToEye = Props.GroundPlane.Xyz;
+            var targetToEye = new Vector3(Props.GroundPlane.X, Props.GroundPlane.Y, Props.GroundPlane.Z);
             var halfExtent = bookmark.Map.Extent / 2.0f;
-            var fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
-            var distance = (float) (halfExtent / MathHelper.Tan(fov / 2.0));
+            var fov = Props.FovDegrees * MathF.PI / 180.0f;
+            var distance = (halfExtent / MathF.Tan(fov / 2.0f));
             var uvec = Vector3.Cross(Props.UpVector, targetToEye);
             var vvec = Vector3.Cross(targetToEye, uvec);
 

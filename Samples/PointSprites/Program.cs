@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Net.Mime;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Filament;
 using Filament.DemoApp;
 using Filament.Image;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 
 namespace PointSprites
 {
@@ -49,7 +48,7 @@ namespace PointSprites
                 float[] kPointSizes = new float[NUM_POINTS];
                 ushort[] kIndices = new ushort[NUM_POINTS];
 
-                var dtheta = MathHelper.Pi * 2 / NUM_POINTS;
+                var dtheta = MathF.PI * 2 / NUM_POINTS;
                 var dsize = MAX_POINT_SIZE / NUM_POINTS;
                 var dcolor = 256.0f / NUM_POINTS;
 
@@ -60,8 +59,8 @@ namespace PointSprites
                 for (int i = 0; i < NUM_POINTS; i++) {
                     float theta = dtheta * i;
                     uint c = (uint) (dcolor * i);
-                    kVertices[i].Position.X = (float) MathHelper.Cos(theta);
-                    kVertices[i].Position.Y = (float) MathHelper.Sin(theta);
+                    kVertices[i].Position.X = MathF.Cos(theta);
+                    kVertices[i].Position.Y = MathF.Sin(theta);
                     kVertices[i].Color = 0xff000000u | c | (c << 8) | (c << 16);
                     kPointSizes[i] = MIN_POINT_SIZE + dsize * i;
                     kIndices[i] = (ushort) i;
@@ -134,7 +133,7 @@ namespace PointSprites
                 camera.SetProjection(Projection.Ortho, -aspect * zoom, aspect * zoom, -zoom, zoom, 0, 1);
 
                 var tcm = engine.TransformManager;
-                tcm.SetTransform(tcm.GetInstance(renderable), Matrix4.CreateFromAxisAngle(Vector3.UnitZ, now));
+                tcm.SetTransform(tcm.GetInstance(renderable), Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, now));
             };
 
             app.Cleanup = (engine, view, scene) => {

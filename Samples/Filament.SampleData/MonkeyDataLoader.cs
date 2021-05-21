@@ -10,14 +10,14 @@
         private const int SuzanneOffset = 0;
         private const int SuzanneSize = 272768;
         private const int AlbedoS3tcOffset = 272768;
-        private const int AlbedoS3tcSize = 699172;
-        private const int RoughnessOffset = 971940;
-        private const int RoughnessSize = 1398209;
-        private const int MetallicOffset = 2370149;
-        private const int MetallicSize = 1398209;
-        private const int AoOffset = 3768358;
-        private const int AoSize = 1398209;
-        private const int NormalOffset = 5166567;
+        private const int AlbedoS3tcSize = 1398236;
+        private const int RoughnessOffset = 1671004;
+        private const int RoughnessSize = 1398236;
+        private const int MetallicOffset = 3069240;
+        private const int MetallicSize = 1398236;
+        private const int AoOffset = 4467476;
+        private const int AoSize = 1398236;
+        private const int NormalOffset = 5865712;
         private const int NormalSize = 1065180;
 
         #endregion

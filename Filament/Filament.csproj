@@ -5,10 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="OpenTK.Mathematics" Version="5.0.0-pre.3" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Filament.Native\Filament.Native.csproj" />
     </ItemGroup>
 

@@ -4,8 +4,12 @@ namespace Filament
 {
     public enum AttachmentPoint
     {
-        Color = 0,
-        Depth = 1,
+        Color0,
+        Color1,
+        Color2,
+        Color3,
+        Depth = 8,
+        Color = Color0,
     }
 
     /// <summary>

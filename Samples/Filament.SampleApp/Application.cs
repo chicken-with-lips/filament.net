@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 using System.Threading;
 using Filament.CameraUtilities;
 using Filament.SampleData;
 using GLFWDotNet;
-using OpenTK.Mathematics;
 using StbImageSharp;
-
 
 namespace Filament.DemoApp
 {
@@ -563,7 +562,7 @@ namespace Filament.DemoApp
 
             _mainCamera.SetLensProjection(_cameraFocalLength, (float) mainWidth / height, near, far);
             _debugCamera.SetProjection(45.0f, (float) width / height, 0.0625f, 4096, FieldOfView.Vertical);
-            _uiCamera.SetProjection(Projection.Ortho, 0, (float) width / dpiScaleX, height / dpiScaleY, 0, 0, 1);
+            _uiCamera.SetProjection(Projection.Ortho, 0, width / dpiScaleX, height / dpiScaleY, 0, 0, 1);
 
             _orthoCamera.SetProjection(Projection.Ortho, -3, 3, -3 * ratio, 3 * ratio, near, far);
             _orthoCamera.LookAt(

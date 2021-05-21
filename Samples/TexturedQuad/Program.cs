@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using Filament;
 using Filament.DemoApp;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 using StbImageSharp;
 
 namespace ViewTest
@@ -145,7 +145,7 @@ namespace ViewTest
             };
 
             app.Animate = (engine, view, now) => {
-                var zoom = 2.0f + 2.0f * (float) MathHelper.Sin(now);
+                var zoom = 2.0f + 2.0f * MathF.Sin(now);
                 var width = view.Viewport.Width;
                 var height = view.Viewport.Height;
                 var aspect = (float) width / (float) height;

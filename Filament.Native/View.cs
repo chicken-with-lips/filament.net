@@ -103,7 +103,9 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetBloomOptions")]
         public static extern void SetBloomOptions(IntPtr nativeView, IntPtr nativeTexture,
             float dirtStrength, float strength, int resolution, float anamorphism, int levels,
-            byte blendMode, bool threshold, bool enabled, float highlight);
+            byte blendMode, bool threshold, bool enabled, float highlight, bool lensFlare, bool starburst,
+            float chromaticAberration, int ghostCount, float ghostSpacing, float ghostThreshold, float haloThickness,
+            float haloRadius, float haloThreshold);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetFogOptions")]
         public static extern void SetFogOptions(IntPtr nativeView,
@@ -117,7 +119,8 @@ namespace Filament.Native
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetDepthOfFieldOptions")]
         public static extern void SetDepthOfFieldOptions(IntPtr nativeView, float focusDistance, float cocScale,
-            float maxApertureDiameter, bool enabled);
+            float maxApertureDiameter, bool enabled, int filter, bool nativeResolution, int foregroundRingCount,
+            int backgroundRingCount, int fastGatherRingCount, int maxForegroundCOC, int maxBackgroundCOC);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetVignetteOptions")]
         public static extern void SetVignetteOptions(IntPtr nativeView, float midPoint, float roundness,

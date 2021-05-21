@@ -1,4 +1,4 @@
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Filament
 {
@@ -12,6 +12,11 @@ namespace Filament
                 normal.X, normal.Y, normal.Z,
                 destination, offset
             );
+        }
+
+        public static float Lerp(float a, float b, float t)
+        {
+            return a * (1 - t) + b * t;
         }
     }
 }

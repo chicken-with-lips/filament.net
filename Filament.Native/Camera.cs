@@ -50,7 +50,10 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Camera_nGetProjectionMatrix")]
         public static extern void GetProjectionMatrix(IntPtr nativeCamera, float[] matrix);
 
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Camera_nGetCullingProjectionMatrix")]
+        public static extern void GetCullingProjectionMatrix(IntPtr nativeCamera, float[] matrix);
+
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Camera_nSetCustomProjection")]
-        public static extern void SetCustomProjection(IntPtr nativeCamera, float[] projection, float near, float far);
+        public static extern void SetCustomProjection(IntPtr nativeCamera, float[] projection, float[] projectionForCulling, float near, float far);
     }
 }

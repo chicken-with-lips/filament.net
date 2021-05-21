@@ -1,5 +1,5 @@
 using System;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Filament.CameraUtilities
 {
@@ -43,19 +43,19 @@ namespace Filament.CameraUtilities
                 bookmark.Mode = Mode.Orbit;
 
                 var pivotToEye = Eye - _pivot;
-                var d = pivotToEye.Length;
+                var d = pivotToEye.Length();
                 var x = pivotToEye.X / d;
                 var y = pivotToEye.Y / d;
                 var z = pivotToEye.Z / d;
 
-                bookmark.Orbit.Phi = (float) MathHelper.Asin(y);
-                bookmark.Orbit.Theta = (float) MathHelper.Atan2(x, z);
+                bookmark.Orbit.Phi = MathF.Asin(y);
+                bookmark.Orbit.Theta = MathF.Atan2(x, z);
                 bookmark.Orbit.Distance = _flipped ? -d : d;
                 bookmark.Orbit.Pivot = _pivot;
 
-                var fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
-                var halfExtent = d * MathHelper.Tan(fov / 2.0);
-                var targetToEye = Props.GroundPlane.Xyz;
+                var fov = Props.FovDegrees * MathF.PI / 180.0f;
+                var halfExtent = d * MathF.Tan(fov / 2.0f);
+                var targetToEye = new Vector3(Props.GroundPlane.X, Props.GroundPlane.Y, Props.GroundPlane.Z);
                 var uvec = Vector3.Cross(Props.UpVector, targetToEye);
                 var vvec = Vector3.Cross(targetToEye, uvec);
                 var centerToTarget = _pivot - Props.TargetPosition;
@@ -77,8 +77,8 @@ namespace Filament.CameraUtilities
                 bookmark.Orbit.Pivot = Props.TargetPosition;
                 bookmark.Orbit.Distance = Vector3.Distance(Props.TargetPosition, Props.OrbitHomePosition);
 
-                var fov = Props.FovDegrees * MathHelper.Pi / 180.0f;
-                var halfExtent = (float) (bookmark.Orbit.Distance * MathHelper.Tan(fov / 2.0));
+                var fov = Props.FovDegrees * MathF.PI / 180.0f;
+                var halfExtent = (bookmark.Orbit.Distance * MathF.Tan(fov / 2.0f));
 
                 bookmark.Map.Extent = halfExtent * 2f;
                 bookmark.Map.Center.X = 0;
@@ -107,7 +107,7 @@ namespace Filament.CameraUtilities
             // By default, place the ground plane so that it aligns with the targetPosition position.
             // This is used only when PANNING.
             if (resolved.GroundPlane == Vector4.Zero) {
-                var d = resolved.TargetPosition.Length;
+                var d = resolved.TargetPosition.Length();
                 var n = Vector3.Normalize(resolved.OrbitHomePosition - resolved.TargetPosition);
                 resolved.GroundPlane = new Vector4(n, -d);
             }
@@ -139,9 +139,9 @@ namespace Filament.CameraUtilities
 
                 var theta = delx * Props.OrbitSpeed.X;
                 var phi = dely * Props.OrbitSpeed.Y;
-                var maxPhi = MathHelper.TwoPi - 0.001f;
+                var maxPhi = MathF.PI*2 - 0.001f;
 
-                bookmark.Orbit.Phi = MathHelper.Clamp(_grabBookmark.Orbit.Phi + phi, -maxPhi, +maxPhi);
+                bookmark.Orbit.Phi = Math.Clamp(_grabBookmark.Orbit.Phi + phi, -maxPhi, +maxPhi);
                 bookmark.Orbit.Theta = _grabBookmark.Orbit.Theta + theta;
 
                 JumpToBookmark(bookmark);
@@ -183,11 +183,11 @@ namespace Filament.CameraUtilities
         public override void JumpToBookmark(Bookmark bookmark)
         {
             _pivot = bookmark.Orbit.Pivot;
-            var x = (float) (MathHelper.Sin(bookmark.Orbit.Theta) * MathHelper.Cos(bookmark.Orbit.Phi));
-            var y = (float) MathHelper.Sin(bookmark.Orbit.Phi);
-            var z = (float) (MathHelper.Cos(bookmark.Orbit.Theta) * MathHelper.Cos(bookmark.Orbit.Phi));
+            var x = (MathF.Sin(bookmark.Orbit.Theta) * MathF.Cos(bookmark.Orbit.Phi));
+            var y = MathF.Sin(bookmark.Orbit.Phi);
+            var z = (MathF.Cos(bookmark.Orbit.Theta) * MathF.Cos(bookmark.Orbit.Phi));
 
-            Eye = _pivot + new Vector3(x, y, z) * MathHelper.Abs(bookmark.Orbit.Distance);
+            Eye = _pivot + new Vector3(x, y, z) * MathF.Abs(bookmark.Orbit.Distance);
             _flipped = bookmark.Orbit.Distance < 0;
             Target = Eye + new Vector3(x, y, z) * (_flipped ? 1.0f : -1.0f);
         }

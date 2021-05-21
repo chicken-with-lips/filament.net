@@ -1,5 +1,5 @@
 using System;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Filament
 {
@@ -63,7 +63,7 @@ namespace Filament
         /// <summary>
         /// The rigid-body transformation applied to the IBL.
         /// </summary>
-        public Matrix3 Rotation {
+        public Matrix4x4 Rotation {
             set {
                 ThrowExceptionIfDisposed();
 

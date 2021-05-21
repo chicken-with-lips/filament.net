@@ -1,8 +1,7 @@
-﻿using System.IO;
+﻿using System.Numerics;
 using Filament;
 using Filament.DemoApp;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 
 namespace VboTest
 {

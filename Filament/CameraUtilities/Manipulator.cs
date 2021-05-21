@@ -1,4 +1,5 @@
-using OpenTK.Mathematics;
+using System;
+using System.Numerics;
 
 namespace Filament.CameraUtilities
 {
@@ -147,14 +148,14 @@ namespace Filament.CameraUtilities
             var upward = Vector3.Cross(right, gaze);
             float width = _props.Viewport[0];
             float height = _props.Viewport[1];
-            var fov = _props.FovDegrees * MathHelper.Pi / 180.0f;
+            var fov = _props.FovDegrees * MathF.PI / 180.0f;
 
             // remap the grid coordinate into [-1, +1] and shift it to the pixel center.
             float u = 2.0f * (0.5f + x) / width - 1.0f;
             float v = 2.0f * (0.5f + y) / height - 1.0f;
 
             // compute the tangent of the field-of-view angle as well as the aspect ratio.
-            float tangent = (float) MathHelper.Tan(fov / 2.0);
+            float tangent = MathF.Tan(fov / 2.0f);
             float aspect = width / height;
 
             // adjust the gaze so it goes through the pixel of interest rather than the grid center.
@@ -272,14 +273,14 @@ namespace Filament.CameraUtilities
             var upward = Vector3.Cross(right, gaze);
             float width = _props.Viewport[0];
             float height = _props.Viewport[1];
-            var fov = _props.FovDegrees * MathHelper.Pi / 180.0f;
+            var fov = _props.FovDegrees * MathF.PI / 180.0f;
 
             // remap the grid coordinate into [-1, +1] and shift it to the pixel center.
             float u = 2.0f * (0.5f + x) / width - 1.0f;
             float v = 2.0f * (0.5f + y) / height - 1.0f;
 
             // compute the tangent of the field-of-view angle as well as the aspect ratio.
-            var tangent = (float) MathHelper.Tan(fov / 2.0);
+            var tangent = MathF.Tan(fov / 2.0f);
             var aspect = width / height;
 
             // Adjust the gaze so it goes through the pixel of interest rather than the grid center.
@@ -299,8 +300,8 @@ namespace Filament.CameraUtilities
         protected bool RaycastPlane(Vector3 origin, Vector3 direction, out float t, object userData)
         {
             var plane = ((Config) userData).GroundPlane;
-            var n = new Vector3(plane[0], plane[1], plane[2]);
-            var p0 = n * plane[3];
+            var n = new Vector3(plane.X, plane.Y, plane.Z);
+            var p0 = n * plane.W;
             var denom = -Vector3.Dot(n, direction);
 
             if (denom > 1e-6) {

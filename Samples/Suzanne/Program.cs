@@ -1,11 +1,11 @@
 ﻿using System.IO;
+using System.Numerics;
 using System.Reflection;
 using Filament;
 using Filament.DemoApp;
 using Filament.Image;
 using Filament.MeshIO;
 using Filament.SampleData;
-using OpenTK.Mathematics;
 using StbImageSharp;
 
 namespace Suzanne
@@ -24,7 +24,7 @@ namespace Suzanne
             Texture metallic = null;
             Texture roughness = null;
             Mesh mesh = null;
-            Matrix4 transform;
+            Matrix4x4 transform;
 
             var app = new Application(
                 new WindowConfig() {
@@ -69,12 +69,12 @@ namespace Suzanne
 
                 var indirectLight = app.Ibl.IndirectLight;
                 indirectLight.Intensity = 100000;
-                indirectLight.Rotation = Matrix3.CreateFromAxisAngle(Vector3.UnitY, 0.5f);
+                indirectLight.Rotation = Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, 0.5f);
 
                 // Add geometry into the scene.
                 mesh = MeshReader.LoadFromBuffer(engine, monkeyData.LoadSuzanne(), materialInstance);
                 var ti = tcm.GetInstance(mesh.Renderable);
-                transform = Matrix4.CreateTranslation(0, 0, -4) * tcm.GetWorldTransform(ti);
+                transform = tcm.GetWorldTransform(ti) * Matrix4x4.CreateTranslation(0, 0, -4);
 
                 rcm.SetCastShadows(rcm.GetInstance(mesh.Renderable), false);
                 scene.AddEntity(mesh.Renderable);

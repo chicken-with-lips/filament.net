@@ -1,4 +1,5 @@
-using OpenTK.Mathematics;
+using System;
+using System.Numerics;
 
 namespace Filament.CameraUtilities
 {
@@ -11,8 +12,8 @@ namespace Filament.CameraUtilities
         private Vector2 _grabEuler; // (pitch, yaw)
         private bool[] _keyDown = new bool[6];
         private bool _grabbing;
-        private float _scrollWheel = 0.0f;
-        private float _scrollPositionNormalized = 0.0f;
+        private float _scrollWheel;
+        private float _scrollPositionNormalized;
         private float _moveSpeed = 1.0f;
         private Vector3 _eyeVelocity;
 
@@ -34,11 +35,11 @@ namespace Filament.CameraUtilities
 
         public void UpdateTarget(float pitch, float yaw)
         {
-            var mat = Matrix3.CreateFromQuaternion(
-                Quaternion.FromEulerAngles(0, yaw, pitch)
+            var mat = Matrix4x4.CreateFromQuaternion(
+                Quaternion.CreateFromYawPitchRoll(yaw, pitch, 0)
             );
 
-            Target = Eye + (mat * new Vector3(0.0f, 0.0f, -1.0f));
+            Target = Eye + Vector3.Transform(-Vector3.UnitZ, mat);
         }
 
         #endregion
@@ -108,17 +109,15 @@ namespace Filament.CameraUtilities
 
             var grabPitch = _grabEuler.X;
             var grabYaw = _grabEuler.Y;
-            var pitch = _targetEuler.X;
-            var yaw = _targetEuler.Y;
 
             double EPSILON = 0.001;
 
             var panSpeed = Props.FlightPanSpeed;
-            float minPitch = (float) (-MathHelper.TwoPi + EPSILON);
-            float maxPitch = (float) (MathHelper.TwoPi - EPSILON);
+            float minPitch = (float) (-MathF.PI*2 + EPSILON);
+            float maxPitch = (float) (MathF.PI*2 - EPSILON);
 
-            pitch = MathHelper.Clamp(grabPitch + del.Y * -panSpeed.Y, minPitch, maxPitch);
-            yaw = grabYaw + del.X * panSpeed.X % 2.0f * MathHelper.Pi;
+            var pitch = Math.Clamp(grabPitch + del.Y * -panSpeed.Y, minPitch, maxPitch);
+            var yaw = grabYaw + del.X * panSpeed.X % 2.0f * MathF.PI;
 
             UpdateTarget(pitch, yaw);
         }
@@ -142,11 +141,11 @@ namespace Filament.CameraUtilities
         {
             var halfSpeedSteps = Props.FlightSpeedSteps / 2.0f;
 
-            _scrollWheel = MathHelper.Clamp(_scrollWheel + scrollDelta, -halfSpeedSteps, halfSpeedSteps);
+            _scrollWheel = Math.Clamp(_scrollWheel + scrollDelta, -halfSpeedSteps, halfSpeedSteps);
 
             // normalize the scroll position from -1 to 1 and calculate the move speed, in world units per second.
             _scrollPositionNormalized = (_scrollWheel + halfSpeedSteps) / halfSpeedSteps - 1.0f;
-            _moveSpeed = (float) MathHelper.Pow(Props.FlightMaxSpeed, _scrollPositionNormalized);
+            _moveSpeed = MathF.Pow(Props.FlightMaxSpeed, _scrollPositionNormalized);
         }
 
         public override void Update(float deltaTime)
@@ -169,8 +168,8 @@ namespace Filament.CameraUtilities
                 forceLocal += new Vector3(1.0f, 0, 0);
             }
 
-            var orientation = Matrix4.LookAt(Eye, Target, Props.UpVector);
-            var forceWorld4 = orientation * new Vector4(forceLocal, 0);
+            var orientation = Matrix4x4.CreateLookAt(Eye, Target, Props.UpVector);
+            var forceWorld4 = Vector4.Transform(new Vector4(forceLocal, 0), orientation);
             Vector3 forceWorld = new Vector3(forceWorld4.X, forceLocal.Y, forceLocal.Z);
 
             if (_keyDown[(int) Key.Up]) {

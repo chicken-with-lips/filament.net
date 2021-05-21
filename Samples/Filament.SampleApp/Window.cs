@@ -1,6 +1,5 @@
 using System;
-using GLFWDotNet;
-using OpenTK.Mathematics;
+using System.Numerics;
 using static GLFWDotNet.GLFW;
 
 namespace Filament.DemoApp

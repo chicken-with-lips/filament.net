@@ -1,5 +1,5 @@
 using System;
-using OpenTK.Mathematics;
+using System.Numerics;
 
 namespace Filament
 {
@@ -385,7 +385,10 @@ namespace Filament
                 Native.View.SetBloomOptions(NativePtr, value.Dirt?.NativePtr ?? IntPtr.Zero,
                     value.DirtStrength, value.Strength,
                     value.Resolution, value.Anamorphism, value.Levels, (byte) value.BlendMode,
-                    value.Threshold, value.Enabled, value.Highlight);
+                    value.Threshold, value.Enabled, value.Highlight, value.LensFlare, value.Starburst,
+                    value.ChromaticAberration, value.GhostCount, value.GhostSpacing, value.GhostThreshold,
+                    value.HaloThickness, value.HaloRadius, value.HaloThreshold
+                );
             }
         }
 
@@ -420,7 +423,12 @@ namespace Filament
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetDepthOfFieldOptions(NativePtr, value.FocusDistance, value.CocScale, value.MaxApertureDiameter, value.Enabled);
+                Native.View.SetDepthOfFieldOptions(
+                    NativePtr, value.FocusDistance, value.CocScale,
+                    value.MaxApertureDiameter, value.Enabled, (int) value.Filter, value.NativeResolution,
+                    value.ForegroundRingCount, value.BackgroundRingCount, value.FastGatherRingCount,
+                    value.MaxForegroundCOC, value.MaxBackgroundCOC
+                );
             }
         }
 
@@ -788,6 +796,51 @@ namespace Filament
         /// </summary>
         public float Highlight;
 
+        /// <summary>
+        /// Enable screen-space lens flare.
+        /// </summary>
+        public bool LensFlare;
+
+        /// <summary>
+        /// Enable starburst effect on lens flare.
+        /// </summary>
+        public bool Starburst;
+
+        /// <summary>
+        /// Amount of chromatic aberration.
+        /// </summary>
+        public float ChromaticAberration;
+
+        /// <summary>
+        /// Number of flare "ghosts".
+        /// </summary>
+        public int GhostCount;
+
+        /// <summary>
+        /// Spacing of the ghost in screen units [0, 1[.
+        /// </summary>
+        public float GhostSpacing;
+
+        /// <summary>
+        /// HDR threshold for the ghosts.
+        /// </summary>
+        public float GhostThreshold;
+
+        /// <summary>
+        /// thickness of halo in vertical screen units, 0 to disable.
+        /// </summary>
+        public float HaloThickness;
+
+        /// <summary>
+        /// radius of halo in vertical screen units [0, 0.5].
+        /// </summary>
+        public float HaloRadius;
+
+        /// <summary>
+        /// HDR threshold for the halo.
+        /// </summary>
+        public float HaloThreshold;
+
         public static ViewBloomOptions Default => new() {
             DirtStrength = 0.2f,
             Strength = 0.1f,
@@ -798,6 +851,14 @@ namespace Filament
             Threshold = true,
             Enabled = false,
             Highlight = 1000f,
+            Starburst = true,
+            ChromaticAberration = 0.005f,
+            GhostCount = 4,
+            GhostSpacing = 0.6f,
+            GhostThreshold = 10.0f,
+            HaloThickness = 0.1f,
+            HaloRadius = 0.4f,
+            HaloThreshold = 10.0f,
         };
     }
 
@@ -868,6 +929,12 @@ namespace Filament
     /// </remarks>
     public struct ViewDepthOfFieldOptions
     {
+        public enum KernelFilter
+        {
+            None,
+            Median,
+        }
+
         /// <summary>Focus distance in world units</summary>
         public float FocusDistance;
 
@@ -880,11 +947,62 @@ namespace Filament
         /// <summary>Enable or disable depth of field effect</summary>
         public bool Enabled;
 
+        /// <summary>
+        /// Filter to use for filling gaps in the kernel.
+        /// </summary>
+        public KernelFilter Filter;
+
+        /// <summary>
+        /// Perform DoF processing at native resolution
+        /// </summary>
+        public bool NativeResolution;
+
+        /// <summary>
+        /// <para>Number of of rings used by the foreground kernel. The number of rings affects quality and performance.
+        /// The actual number of sample per pixel is defined as (ringCount * 2 - 1)^2. Here are a few commonly used
+        /// values:</para>
+        /// <list>
+        /// <item>3 rings :   25 ( 5x 5 grid)</item>
+        /// <item>4 rings :   49 ( 7x 7 grid)</item>
+        /// <item>5 rings :   81 ( 9x 9 grid)</item>
+        /// <item>17 rings : 1089 (33x33 grid)</item>
+        /// </list>
+        /// <para>With a maximum circle-of-confusion of 32, it is never necessary to use more than 17 rings.</para>
+        /// <para>Usually all three settings below are set to the same value, however, it is often acceptable to use a
+        /// lower ring count for the "fast tiles", which improves performance. Fast tiles are regions of the screen
+        /// where every pixels have a similar circle-of-confusion radius.</para>
+        /// <para>A value of 0 means default, which is 5 on desktop and 3 on mobile.</para>
+        /// </summary>
+        public int ForegroundRingCount;
+
+        /// <summary>
+        /// Number of of rings used by the background kernel. The number of rings affects quality and performance.
+        /// </summary>
+        public int BackgroundRingCount;
+
+        /// <summary>
+        /// Number of of rings used by the fast gather kernel. The number of rings affects quality and performance.
+        /// </summary>
+        public int FastGatherRingCount;
+
+        /// <summary>
+        /// Maximum circle-of-confusion in pixels for the foreground, must be in [0, 32] range. A value of 0 means
+        /// default, which is 32 on desktop and 24 on mobile.
+        /// </summary>
+        public int MaxForegroundCOC;
+
+        /// <summary>
+        /// Maximum circle-of-confusion in pixels for the background, must be in [0, 32] range. A value of 0 means
+        /// default, which is 32 on desktop and 24 on mobile.
+        /// </summary>
+        public int MaxBackgroundCOC;
+
         public static ViewDepthOfFieldOptions Default => new() {
             FocusDistance = 10f,
             CocScale = 1f,
             MaxApertureDiameter = 0.1f,
             Enabled = false,
+            Filter = KernelFilter.Median,
         };
     }
 
