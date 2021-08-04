@@ -68,8 +68,8 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetDynamicResolutionOptions")]
         public static extern void SetShadowType(IntPtr nativeView, byte type);
 
-        [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetDynamicResolutionOptions")]
-        public static extern void SetVsmShadowOptions(IntPtr nativeView, int anistropy);
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetVsmShadowOptions")]
+        public static extern void SetVsmShadowOptions(IntPtr nativeView, int anisotropy, bool mipmapping, float exponent, float minVarianceScale, float lightBleedReduction);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetRenderQuality")]
         public static extern void SetRenderQuality(IntPtr nativeView, byte hdrColorBufferQuality);
@@ -92,6 +92,7 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetAmbientOcclusionOptions")]
         public static extern void SetAmbientOcclusionOptions(IntPtr nativeView, float radius, float bias, float power,
             float resolution, float intensity,
+            float bilateralThreshold,
             byte quality, byte lowPassFilter, byte upsampling, bool enabled, float minHorizonAngleRad,
             float ssctLightConeRad, float ssctStartTraceDistance,
             float ssctContactDistanceMax,
@@ -118,7 +119,7 @@ namespace Filament.Native
         public static extern void SetBlendMode(IntPtr nativeView, byte blendMode);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_View_nSetDepthOfFieldOptions")]
-        public static extern void SetDepthOfFieldOptions(IntPtr nativeView, float focusDistance, float cocScale,
+        public static extern void SetDepthOfFieldOptions(IntPtr nativeView, float cocScale,
             float maxApertureDiameter, bool enabled, int filter, bool nativeResolution, int foregroundRingCount,
             int backgroundRingCount, int fastGatherRingCount, int maxForegroundCOC, int maxBackgroundCOC);
 

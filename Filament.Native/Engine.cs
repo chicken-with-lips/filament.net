@@ -5,7 +5,7 @@ namespace Filament.Native
 {
     public static class Engine
     {
-        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateEngine")]
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateEngine", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr CreateEngine(int backend, IntPtr sharedContext);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nDestroyEngine")]
@@ -23,8 +23,8 @@ namespace Filament.Native
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateRenderer")]
         public static extern IntPtr CreateRenderer(IntPtr nativeEngine);
 
-        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateCameraWithEntity")]
-        public static extern IntPtr CreateCameraWithEntity(IntPtr nativeEngine, int entity);
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nCreateCamera")]
+        public static extern IntPtr CreateCamera(IntPtr nativeEngine, int entity);
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_Engine_nDestroyCameraComponent")]
         public static extern void DestroyCameraComponent(IntPtr nativeEngine, int entity);

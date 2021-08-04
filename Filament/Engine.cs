@@ -179,7 +179,7 @@ namespace Filament
             ThrowExceptionIfDisposed();
 
             return Camera.GetOrCreateCache(
-                Native.Engine.CreateCameraWithEntity(NativePtr, entity)
+                Native.Engine.CreateCamera(NativePtr, entity)
             );
         }
 

@@ -13,10 +13,10 @@ namespace Filament
         {
         }
 
-        public TextureSampler(SamplerMinFilter min, SamplerMagFilter mag, SamplerWrapMode str = SamplerWrapMode.ClampToEdge)
-            : this(Native.TextureSampler.CreateSampler((byte) min, (byte) mag, (byte) str, (byte) str, (byte) str))
+        public TextureSampler(SamplerMinFilter min, SamplerMagFilter mag, SamplerWrapMode wrapS = SamplerWrapMode.ClampToEdge, SamplerWrapMode wrapT = SamplerWrapMode.ClampToEdge, SamplerWrapMode wrapR = SamplerWrapMode.ClampToEdge, float anisotropy = 0)
+            : this(Native.TextureSampler.CreateSampler((byte) min, (byte) mag, (byte) wrapS, (byte) wrapT, (byte) wrapR, anisotropy))
         {
-            ManuallyRegisterCache(NativePtr, this);
+            GetOrCreateCache(NativePtr);
         }
 
         internal static TextureSampler GetOrCreateCache(IntPtr ptr)

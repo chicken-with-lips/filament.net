@@ -52,6 +52,9 @@ namespace Filament.Native
 
         [DllImport("libfilament-dotnet", EntryPoint = "filament_RenderableManager_nDestroy")]
         public static extern void Destroy(IntPtr nativeRenderableManager, int entity);
+
+        [DllImport("libfilament-dotnet", EntryPoint = "filament_RenderableManager_nGetAxisAlignedBoundingBox")]
+        public static extern void GetAxisAlignedBoundingBox(IntPtr nativeRenderableManager, int entity, out float centerX, out float centerY, out float centerZ, out float halfExtentX, out float halfExtentY, out float halfExtentZ);
     }
 
     public static class RenderableBuilder

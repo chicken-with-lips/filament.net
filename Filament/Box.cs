@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace Filament
@@ -16,6 +17,12 @@ namespace Filament
         /// Half extent from the center on all 3 axis.
         /// </summary>
         public Vector3 HalfExtent { get; }
+
+        /// <summary>Computes the lowest coordinates corner of the box.</summary>
+        public Vector3 Min => Center - HalfExtent;
+
+        /// <summary>Computes the largest coordinates corner of the box.</summary>
+        public Vector3 Max => Center + HalfExtent;
 
         public Box(Vector3 center, Vector3 halfExtent)
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace Filament
 {
@@ -173,6 +174,25 @@ namespace Filament
             ThrowExceptionIfDisposed();
 
             Native.RenderableManager.SetBlenderOrderAt(NativePtr, instance, primitiveIndex, blendOrder);
+        }
+
+        public Box GetAxisAlignedBoundingBox(int instance)
+        {
+            ThrowExceptionIfDisposed();
+
+            Native.RenderableManager.GetAxisAlignedBoundingBox(NativePtr, instance,
+                out var centerX,
+                out var centerY,
+                out var centerZ,
+                out var halfExtentX,
+                out var halfExtentY,
+                out var halfExtentZ
+            );
+
+            return new Box(
+                new Vector3(centerX, centerY, centerZ),
+                new Vector3(halfExtentX, halfExtentY, halfExtentZ)
+            );
         }
 
         /// <summary>

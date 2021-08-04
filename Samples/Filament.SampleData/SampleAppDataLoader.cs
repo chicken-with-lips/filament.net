@@ -8,22 +8,22 @@ namespace Filament.SampleData
 
 #if DEBUG
         private const int AiDefaultMatOffset = 0;
-        private const int AiDefaultMatSize = 569878;
-        private const int AiDefaultTransOffset = 569878;
-        private const int AiDefaultTransSize = 545456;
-        private const int DepthVisualizerOffset = 1115334;
-        private const int DepthVisualizerSize = 78862;
-        private const int TransparentColorOffset = 1194196;
-        private const int TransparentColorSize = 79028;
+        private const int AiDefaultMatSize = 907932;
+        private const int AiDefaultTransOffset = 907932;
+        private const int AiDefaultTransSize = 874821;
+        private const int DepthVisualizerOffset = 1782753;
+        private const int DepthVisualizerSize = 111224;
+        private const int TransparentColorOffset = 1893977;
+        private const int TransparentColorSize = 111911;
 #elif RELEASE
         private const int AiDefaultMatOffset = 0;
-        private const int AiDefaultMatSize = 379289;
-        private const int AiDefaultTransOffset = 379289;
-        private const int AiDefaultTransSize = 328966;
-        private const int DepthVisualizerOffset = 708255;
-        private const int DepthVisualizerSize = 22087;
-        private const int TransparentColorOffset = 730342;
-        private const int TransparentColorSize = 21794;
+        private const int AiDefaultMatSize = 365086;
+        private const int AiDefaultTransOffset = 365086;
+        private const int AiDefaultTransSize = 316034;
+        private const int DepthVisualizerOffset = 681120;
+        private const int DepthVisualizerSize = 22191;
+        private const int TransparentColorOffset = 703311;
+        private const int TransparentColorSize = 21899;
 #endif
 
         #endregion

@@ -241,12 +241,12 @@ namespace Filament
             get {
                 ThrowExceptionIfDisposed();
 
-                return (ViewAntiAliasing) Native.View.GetAntiAliasing(NativePtr);
+                return (ViewAntiAliasing)Native.View.GetAntiAliasing(NativePtr);
             }
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetAntiAliasing(NativePtr, (byte) value);
+                Native.View.SetAntiAliasing(NativePtr, (byte)value);
             }
         }
 
@@ -257,12 +257,12 @@ namespace Filament
             get {
                 ThrowExceptionIfDisposed();
 
-                return (ViewDithering) Native.View.GetDithering(NativePtr);
+                return (ViewDithering)Native.View.GetDithering(NativePtr);
             }
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetDithering(NativePtr, (byte) value);
+                Native.View.SetDithering(NativePtr, (byte)value);
             }
         }
 
@@ -279,7 +279,7 @@ namespace Filament
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetShadowType(NativePtr, (byte) value);
+                Native.View.SetShadowType(NativePtr, (byte)value);
             }
         }
 
@@ -322,12 +322,12 @@ namespace Filament
             get {
                 ThrowExceptionIfDisposed();
 
-                return (ViewAmbientOcclusion) Native.View.GetAmbientOcclusion(NativePtr);
+                return (ViewAmbientOcclusion)Native.View.GetAmbientOcclusion(NativePtr);
             }
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetAmbientOcclusion(NativePtr, (byte) value);
+                Native.View.SetAmbientOcclusion(NativePtr, (byte)value);
             }
         }
 
@@ -339,7 +339,7 @@ namespace Filament
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetRenderQuality(NativePtr, (byte) value.HdrColorBuffer);
+                Native.View.SetRenderQuality(NativePtr, (byte)value.HdrColorBuffer);
             }
         }
 
@@ -353,7 +353,14 @@ namespace Filament
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetVsmShadowOptions(NativePtr, value.Anisotropy);
+                Native.View.SetVsmShadowOptions(
+                    NativePtr,
+                    value.Anisotropy,
+                    value.Mipmapping,
+                    value.Exponent,
+                    value.MinVarianceScale,
+                    value.LightBleedReduction
+                );
             }
         }
 
@@ -365,8 +372,8 @@ namespace Filament
                 ThrowExceptionIfDisposed();
 
                 Native.View.SetAmbientOcclusionOptions(NativePtr,
-                    value.Radius, value.Bias, value.Power, value.Resolution, value.Intensity,
-                    (byte) value.Quality, (byte) value.LowPassFilter, (byte) value.Upsampling, value.Enabled, value.MinHorizonAngleRad,
+                    value.Radius, value.Bias, value.Power, value.Resolution, value.Intensity, value.BilateralThreshold,
+                    (byte)value.Quality, (byte)value.LowPassFilter, (byte)value.Upsampling, value.Enabled, value.MinHorizonAngleRad,
                     value.Ssct.LightConeRad, value.Ssct.ShadowDistance,
                     value.Ssct.ContactDistanceMax, value.Ssct.Intensity,
                     value.Ssct.LightDirection.X, value.Ssct.LightDirection.Y, value.Ssct.LightDirection.Z,
@@ -384,7 +391,7 @@ namespace Filament
 
                 Native.View.SetBloomOptions(NativePtr, value.Dirt?.NativePtr ?? IntPtr.Zero,
                     value.DirtStrength, value.Strength,
-                    value.Resolution, value.Anamorphism, value.Levels, (byte) value.BlendMode,
+                    value.Resolution, value.Anamorphism, value.Levels, (byte)value.BlendMode,
                     value.Threshold, value.Enabled, value.Highlight, value.LensFlare, value.Starburst,
                     value.ChromaticAberration, value.GhostCount, value.GhostSpacing, value.GhostThreshold,
                     value.HaloThickness, value.HaloRadius, value.HaloThreshold
@@ -412,7 +419,7 @@ namespace Filament
             set {
                 ThrowExceptionIfDisposed();
 
-                Native.View.SetBlendMode(NativePtr, (byte) value);
+                Native.View.SetBlendMode(NativePtr, (byte)value);
             }
         }
 
@@ -424,8 +431,8 @@ namespace Filament
                 ThrowExceptionIfDisposed();
 
                 Native.View.SetDepthOfFieldOptions(
-                    NativePtr, value.FocusDistance, value.CocScale,
-                    value.MaxApertureDiameter, value.Enabled, (int) value.Filter, value.NativeResolution,
+                    NativePtr, value.CocScale,
+                    value.MaxApertureDiameter, value.Enabled, (int)value.Filter, value.NativeResolution,
                     value.ForegroundRingCount, value.BackgroundRingCount, value.FastGatherRingCount,
                     value.MaxForegroundCOC, value.MaxBackgroundCOC
                 );
@@ -625,7 +632,27 @@ namespace Filament
         /// </remarks>
         public int Anisotropy;
 
-        public static VsmShadowOptions Default => new();
+        /// <summary>Whether to generate mipmaps for all VSM shadow maps.</summary>
+        public bool Mipmapping;
+
+        /// <summary>EVSM exponent.  The maximum value permissible is 5.54 for a shadow map in fp16, or 42.0 for a
+        /// shadow map in fp32. Currently the shadow map bit depth is always fp16.
+        /// </summary>
+        public float Exponent;
+
+        /// <summary>VSM minimum variance scale, must be positive.</summary>
+        public float MinVarianceScale;
+
+        /// <summary>VSM light bleeding reduction amount, between 0 and 1.</summary>
+        public float LightBleedReduction;
+
+        public static VsmShadowOptions Default => new() {
+            Anisotropy = 0,
+            Mipmapping = false,
+            Exponent = 5.54f,
+            MinVarianceScale = 1.0f,
+            LightBleedReduction = 0.2f,
+        };
     }
 
     /// <summary>
@@ -647,6 +674,16 @@ namespace Filament
 
         /// <summary>Strength of the Ambient Occlusion effect.</summary>
         public float Intensity;
+
+        /// <summary>
+        /// Depth distance that constitute an edge for filtering. Must be positive. Default is 5cm.
+        /// </summary>
+        /// <remarks>
+        /// This must be adjusted with the scene's scale and/or units. A value too low will result in high frequency
+        /// noise, while a value too high will result in the loss of geometry edges. For AO, it is generally better to
+        /// be too blurry than not enough.
+        /// </remarks>
+        public float BilateralThreshold;
 
         /// <summary>Affects # of samples used for AO.</summary>
         public ViewQualityLevel Quality;
@@ -673,6 +710,7 @@ namespace Filament
             Bias = 0.0005f,
             Resolution = 0.5f,
             Intensity = 1.0f,
+            BilateralThreshold = 0.05f,
             Quality = ViewQualityLevel.Low,
             LowPassFilter = ViewQualityLevel.Medium,
             Upsampling = ViewQualityLevel.Low,
@@ -752,10 +790,10 @@ namespace Filament
         public float Strength;
 
         /// <summary>
-        /// Resolution of bloom's minor axis.
+        /// Resolution of bloom's vertical axis.
         /// </summary>
         /// <remarks>
-        /// The minimum value is 2^levels and the the maximum is lower of the original resolution and 4096. This
+        /// The minimum value is 2^levels and the the maximum is lower of the original resolution and 2048. This
         /// parameter is silently clamped to the minimum and maximum. It is highly recommended that this value be
         /// smaller than the target resolution after dynamic resolution is applied (horizontally and vertically).
         /// </remarks>
@@ -767,7 +805,7 @@ namespace Filament
         public float Anamorphism;
 
         /// <summary>
-        /// Number of successive blurs to achieve the blur effect, the minimum is 3 and the maximum is 12.
+        /// Number of successive blurs to achieve the blur effect, the minimum is 3 and the maximum is 11.
         /// </summary>
         /// <remarks>
         /// This value together with resolution influences the spread of the blur effect. This value can be silently
